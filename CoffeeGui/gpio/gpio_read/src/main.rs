@@ -1,6 +1,8 @@
 use std::error::Error;
 use std::thread;
 use std::time::Duration;
+use std::sync::mpsc;
+//use rppal::system::DeviceInfo;
 
 mod joy_pad;
 use joy_pad::Action;
@@ -11,10 +13,28 @@ fn main()  -> Result<(), Box<dyn Error>> {
 
   let mut pad: Pad = Pad::new(5, 6, 27, 23, 17, 22, 4)?;
 
+  //create channesl for threads to send data to central loop
+  let (tx, rx) = mpsc::channel();
+
+  //create gui input thread
+  thread::spawn(move || {
+    loop {
+      let presses = pad.detect_changes();
+      tx.send(presses).unwrap();
+      thread::sleep(Duration::from_millis(20));
+    }
+  });
+
+
   loop {
-    let presses = pad.detect_changes();
-    process_presses(&presses);
-    thread::sleep(Duration::from_millis(20));
+    match rx.try_recv() {
+        Ok(presses) => { 
+           process_presses(&presses);
+        },
+        Err(_) => ()
+    }
+    thread::sleep(Duration::from_millis(5));
+
   };
 }
 
