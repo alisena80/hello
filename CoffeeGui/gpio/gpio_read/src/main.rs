@@ -7,29 +7,38 @@ use std::sync::mpsc;
 mod joy_pad;
 use joy_pad::Action;
 use joy_pad::Pad;
-use joy_pad::Presses;
+use joy_pad::ButtonAction;
+use joy_pad::ButtonInitializer;
+
 
 fn main()  -> Result<(), Box<dyn Error>> { 
+  let button_initializers = vec![
+     ButtonInitializer {pin: 5, code: 0},
+     ButtonInitializer {pin: 6, code: 1},
+     ButtonInitializer {pin: 27, code: 2},
+     ButtonInitializer {pin: 23, code: 3},
+     ButtonInitializer {pin: 17, code: 4},
+     ButtonInitializer {pin: 22, code: 5},
+     ButtonInitializer {pin: 4, code:  6},
+  
+  ];
 
-  let mut pad: Pad = Pad::new(5, 6, 27, 23, 17, 22, 4)?;
-
+  let mut pad =  Pad::new(button_initializers)?;
   //create channesl for threads to send data to central loop
-  let (tx, rx) = mpsc::channel();
-
-  //create gui input thread
+  let (input_tx, input_rx) = mpsc::channel();
   thread::spawn(move || {
-    loop {
-      let presses = pad.detect_changes();
-      tx.send(presses).unwrap();
-      thread::sleep(Duration::from_millis(20));
-    }
+            loop {
+                let button_actions = pad.detect_changes();
+                input_tx.send(button_actions).unwrap();
+                thread::sleep(Duration::from_millis(20));
+            }
+
   });
 
-
   loop {
-    match rx.try_recv() {
-        Ok(presses) => { 
-           process_presses(&presses);
+    match input_rx.try_recv() {
+        Ok(button_actions) => { 
+           process_ba(button_actions);
         },
         Err(_) => ()
     }
@@ -38,24 +47,20 @@ fn main()  -> Result<(), Box<dyn Error>> {
   };
 }
 
-
-fn process_presses(presses: &Presses){
-    print_press(&presses.b, "b");
-    print_press(&presses.a, "a");
-    print_press(&presses.l, "l");
-    print_press(&presses.r, "r");
-    print_press(&presses.up, "up");
-    print_press(&presses.dn, "dn");
-    print_press(&presses.hat, "hat");
-
-
-
+fn code_to_key<'l>(code: usize) -> &'l str{
+    let keys = ["b", "a", "l", "r", "up", "dn", "hat"];
+    return keys[code];
+}
+fn process_ba(button_actions: Vec<ButtonAction>){
+    for ba in button_actions{
+        print_ba(&ba.action, ba.code);
+    }
 }
 
-fn print_press(press: &Option<Action>, name: &str){
-    match press {
-        Some(Action::Pressed) => println!("{} was pressed", name),
-        Some(Action::Released) => println!("{} was released", name),
+fn print_ba(action: &Option<Action>, code: u8){
+    match action {
+        Some(Action::Pressed) => println!("{} was pressed", code_to_key(usize::from(code))),
+        Some(Action::Released) => println!("{} was released", code_to_key(usize::from(code))),
         _ => ()
     }
 }
