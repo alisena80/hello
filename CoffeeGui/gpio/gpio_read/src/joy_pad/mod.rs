@@ -106,8 +106,9 @@ impl Pad {
           }
       } else {
           if button.state == Level::Low {
-            if button.repeat % 5 == 0 {
-                button.repeat = 0;
+            button.repeat += 1;
+            if button.repeat > 20 && button.repeat % 5 == 0 {
+                button.repeat -= 5;
                 Some(Action::Pressed)
             } else {
                 None
