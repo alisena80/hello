@@ -4,31 +4,30 @@ use rppal::gpio::Gpio;
 use rppal::gpio::Level;
 use rppal::gpio::InputPin;
 
-use std::thread;
-use std::time::Duration;
-use std::sync::mpsc::Sender;
-
 pub struct ButtonInitializer {
     pub pin: u8,
-    pub code: u8
+    pub code: u8,
+    pub key: &'static str
 }
 
 struct Button {
    pin: InputPin,
    state: Level,
    possible_state:Level,
-   code: u8
+   code: u8,
+   repeat: u8
 }
 
 impl Button {
     pub fn new(pin: InputPin, code: u8 ) -> Button {
-        let mut state = pin.read();
-        let mut possible_state = pin.read();    
+        let state = pin.read();
+        let possible_state = pin.read();    
         let button: Button = Button {
             pin: pin,
             state: state,
             possible_state: possible_state,
-            code: code
+            code: code,
+            repeat: 0
         };
         button
     }
@@ -36,7 +35,7 @@ impl Button {
 }
 
 pub struct ButtonAction {
-    pub action: Option<Action>,
+    pub action: Action,
     pub code: u8
 }
 
@@ -49,11 +48,11 @@ pub struct Pad {
 }
 
 impl Pad {
-  pub fn new( pins: Vec<ButtonInitializer>) -> Result<Pad, Box<dyn Error>> {
+  pub fn new( pins: &Vec<ButtonInitializer>) -> Result<Pad, Box<dyn Error>> {
       let mut buttons : Vec<Button> = Vec::with_capacity(pins.len());
       let gpio = Gpio::new()?;
-      for pin in &pins {
-        let mut button = Button::new(gpio.get(pin.pin)?.into_input(), pin.code);
+      for pin in pins {
+        let button = Button::new(gpio.get(pin.pin)?.into_input(), pin.code);
         buttons.push(button);
       }
       let pad: Pad = Pad {
@@ -68,13 +67,17 @@ impl Pad {
 
       for mut button in &mut self.buttons {
         let action : Option<Action> =  Pad::detect_button_changes(&mut button);
-        button_actions.push(
-            ButtonAction{
-                action: action,
-                code: button.code
-            }  
-        );
-      
+        match action {
+            Some(act) => {
+                button_actions.push(
+                    ButtonAction{
+                        action: act,
+                        code: button.code
+                    }  
+                );
+            },
+            None => ()
+        }          
       }
       self.detect_possible_changes();
       button_actions
@@ -84,13 +87,14 @@ impl Pad {
       for button in &mut self.buttons{
         button.possible_state = button.pin.read()
       }
-
   }
 
   fn detect_button_changes(button: &mut Button) -> Option<Action> {
       if button.possible_state != button.state {
           if button.pin.read() == button.possible_state {
               button.state = button.possible_state;
+              // change state ... reset the repeat counter
+              button.repeat = 0;
               if button.state == Level::Low {
                 Some(Action::Pressed)
               } else {
@@ -100,9 +104,44 @@ impl Pad {
               button.possible_state = button.state;
               None
           }
-      } else { 
-          None
+      } else {
+          if button.state == Level::Low {
+            if button.repeat % 5 == 0 {
+                button.repeat = 0;
+                Some(Action::Pressed)
+            } else {
+                None
+            } 
+          } else {
+            None
+          }
       }
+    }
+}
+
+pub mod helpers {
+
+    pub fn ba_to_console(button_actions: Vec<super::ButtonAction>, button_initializers: &Vec<super::ButtonInitializer>){
+        for ba in button_actions{
+            print_ba(&ba.action, ba.code, code_to_key(ba.code, button_initializers));
+        }
+    }
+
+    fn print_ba<T>(action: &super::Action, code: u8, key: T) where T: std::fmt::Display {
+        match action {
+            super::Action::Pressed => println!("{} was pressed code: {}", key, code),
+            super::Action::Released => println!("{} was released: code {}", key, code),
+        }
+    }
+
+    fn code_to_key(code: u8, button_initializers: &Vec<super::ButtonInitializer>) -> &str{
+        let bi = button_initializers.iter().find(|bi|
+            bi.code == code
+        );
+        match bi {
+            Some(s) => s.key,
+            None => ""
+        }
     }
 }
 
