@@ -50,7 +50,7 @@ fn main()  -> Result<(), Box<dyn Error>> {
                             2 => fb.pan(-1, 0),
                             3 => fb.pan(1, 0),
                             4 => fb.pan(0, -1),
-                            5 => fb.pan(9, 1),
+                            5 => fb.pan(0, 1),
                             _ => ()
                         }
                     },
@@ -93,7 +93,7 @@ impl FB {
         let bytespp = framebuffer.var_screen_info.bits_per_pixel / 8;
 
         let frame = vec![0u8; (line_length * h) as usize];
-        let img = bmp::open("examples/rust-logo/rust-logo.bmp").unwrap();
+        let img = bmp::open("pic/rust-logo.bmp").unwrap();
         FB {
             fb: framebuffer,
             w: w,
@@ -110,7 +110,7 @@ impl FB {
     pub fn pan(&mut self, x: i32, y: i32){
          //move x
         self.offset_x = ((self.offset_x as i32) + x ) as u32;
-        self.offset_x = ((self.offset_y as i32) + y ) as u32;
+        self.offset_y = ((self.offset_y as i32) + y ) as u32;
 /*
         if self.offset_x < 0 {
             self.offset_x = 0;
@@ -125,14 +125,15 @@ impl FB {
             self.offset_y = self.h;
         }
         self.draw();
-       
+        println!("ox: {}, oy: {}", self.offset_x, self.offset_y);
+      
     }
 
     pub fn draw(&mut self){
        
         for (x, y) in self.img.coordinates() {
             if x < 240 && y < 240 {
-                let px = self.img.get_pixel(x, y);
+                let px = self.img.get_pixel(x + self.offset_x, y + self.offset_y);
                 let start_index = ((y * self.ll) + (x * self.bpp)) as usize;
                 let r: u8 = ((31.0 * px.r as f32) / 255 as f32) as u8;
                 let g: u8 = ((63.0 * px.g as f32) / 255 as f32) as u8;
