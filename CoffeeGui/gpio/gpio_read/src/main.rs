@@ -58,6 +58,16 @@ fn main()  -> Result<(), Box<dyn Error>> {
                             _ => ()
                         }
                     },
+                    Action::Repeated => {
+                        match ba.code {
+                            2 => fb.pan(-5, 0),
+                            3 => fb.pan(5, 0),
+                            4 => fb.pan(0, -5),
+                            5 => fb.pan(0, 5),
+                            _ => ()
+                        }
+                    },
+
                     Action::Released => ()
                 }
             }
@@ -124,11 +134,11 @@ impl FB {
             self.offset_y = i32_y_total as u32;
         }
 
-        if self.offset_x > self.w {
-            self.offset_x = self.w;
+        if self.offset_x + self.w > self.img.get_width() {
+            self.offset_x = self.img.get_width() - self.w;
         }
-        if self.offset_y > self.h {
-            self.offset_y = self.h;
+        if self.offset_y + self.h > self.img.get_height() {
+            self.offset_y = self.img.get_height() - self.h;
         }
         self.draw(); 
     }
@@ -147,10 +157,10 @@ impl FB {
                 self.frame[start_index + 1] = (rgb565 >> 8) as u8;
             }
         }
-        println!("t1: {}", now.elapsed().unwrap().as_secs());
+        println!("t1: {}", now.elapsed().unwrap().as_millis());
 
         let _ = self.fb.write_frame(&self.frame);
-        println!("t2: {}", now.elapsed().unwrap().as_secs());
+        println!("t2: {}", now.elapsed().unwrap().as_millis());
 
     
     }

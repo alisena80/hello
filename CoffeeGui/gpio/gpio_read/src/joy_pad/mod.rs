@@ -42,6 +42,7 @@ pub struct ButtonAction {
 pub enum Action {
     Pressed,
     Released,
+    Repeated
 }
 pub struct Pad {
     buttons: Vec<Button>,
@@ -109,7 +110,7 @@ impl Pad {
             button.repeat += 1;
             if button.repeat > 20 && button.repeat % 5 == 0 {
                 button.repeat -= 5;
-                Some(Action::Pressed)
+                Some(Action::Repeated)
             } else {
                 None
             } 
@@ -132,6 +133,7 @@ pub mod helpers {
         match action {
             super::Action::Pressed => println!("{} was pressed code: {}", key, code),
             super::Action::Released => println!("{} was released: code {}", key, code),
+            super::Action::Repeated =>  println!("{} was repeated: code {}", key, code), 
         }
     }
 
