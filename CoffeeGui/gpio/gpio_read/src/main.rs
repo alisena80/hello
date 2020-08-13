@@ -14,6 +14,10 @@ extern crate framebuffer;
 use bmp::Image;
 use framebuffer::{Framebuffer};
 
+use std::time::{SystemTime};
+
+
+
 fn main()  -> Result<(), Box<dyn Error>> { 
   let button_initializers = vec![
      ButtonInitializer {pin: 5, code: 0, key: "b"},
@@ -65,8 +69,6 @@ fn main()  -> Result<(), Box<dyn Error>> {
 
   };
 
-
-
 }
 
 struct FB {
@@ -78,8 +80,7 @@ struct FB {
     frame: Vec<u8>,
     img: Image,
     offset_x: u32,
-    offset_y: u32,
-   
+    offset_y: u32,   
 }
 
 impl FB {
@@ -90,7 +91,7 @@ impl FB {
         let w = framebuffer.var_screen_info.xres;
         let h = framebuffer.var_screen_info.yres;
         let line_length = framebuffer.fix_screen_info.line_length;
-        let bytespp = framebuffer.var_screen_info.bits_per_pixel / 8;
+    let bytespp = framebuffer.var_screen_info.bits_per_pixel / 8;
 
         let frame = vec![0u8; (line_length * h) as usize];
         let img = bmp::open("pic/rust-logo.bmp").unwrap();
@@ -109,28 +110,31 @@ impl FB {
 
     pub fn pan(&mut self, x: i32, y: i32){
          //move x
-        self.offset_x = ((self.offset_x as i32) + x ) as u32;
-        self.offset_y = ((self.offset_y as i32) + y ) as u32;
-/*
-        if self.offset_x < 0 {
+        let i32_x_total = self.offset_x as i32 + x;
+        if i32_x_total < 0 {
             self.offset_x = 0;
+        } else {
+            self.offset_x = i32_x_total as u32;
         }
-        if self.offset_y < 0 {
+    
+        let i32_y_total = self.offset_y as i32 + y;
+        if i32_y_total < 0 {
             self.offset_y = 0;
-        } */
+        } else {    
+            self.offset_y = i32_y_total as u32;
+        }
+
         if self.offset_x > self.w {
             self.offset_x = self.w;
         }
         if self.offset_y > self.h {
             self.offset_y = self.h;
         }
-        self.draw();
-        println!("ox: {}, oy: {}", self.offset_x, self.offset_y);
-      
+        self.draw(); 
     }
 
     pub fn draw(&mut self){
-       
+        let now = SystemTime::now();
         for (x, y) in self.img.coordinates() {
             if x < 240 && y < 240 {
                 let px = self.img.get_pixel(x + self.offset_x, y + self.offset_y);
@@ -143,8 +147,10 @@ impl FB {
                 self.frame[start_index + 1] = (rgb565 >> 8) as u8;
             }
         }
+        println!("t1: {}", now.elapsed().unwrap().as_secs());
 
         let _ = self.fb.write_frame(&self.frame);
+        println!("t2: {}", now.elapsed().unwrap().as_secs());
 
     
     }
