@@ -150,6 +150,8 @@ impl FB {
     pub fn draw_rect(&mut self, x1: u32, y1: u32, mut width: u32, mut height: u32) {
         self.draw_h_line(x1, y1, width);
         self.draw_h_line(x1, y1 + height, width);
+        self.draw_v_line(x1, y1, height);
+        self.draw_v_line(x1 + width, y1, height);
     }
 
     pub fn draw_h_line(&mut self, x1: u32, y1: u32, width: u32){
