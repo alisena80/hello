@@ -44,7 +44,7 @@ impl FB {
         let w = framebuffer.var_screen_info.xres;
         let h = framebuffer.var_screen_info.yres;
         let line_length = framebuffer.fix_screen_info.line_length;
-    let bytespp = framebuffer.var_screen_info.bits_per_pixel / 8;
+        let bytespp = framebuffer.var_screen_info.bits_per_pixel / 8;
 
         let frame = vec![0u8; (line_length * h) as usize];
         let img = bmp::open("pic/rust-logo.bmp").unwrap();
@@ -149,9 +149,15 @@ impl FB {
 
     pub fn draw_rect(&mut self, x1: u32, y1: u32, mut width: u32, mut height: u32) {
         self.draw_h_line(x1, y1, width);
-        self.draw_h_line(x1, y1 + height, width);
+        self.draw_h_line(x1, y1 + height - 1, width);
         self.draw_v_line(x1, y1, height);
-        self.draw_v_line(x1 + width, y1, height);
+        self.draw_v_line(x1 + width - 1, y1, height);
+    }
+
+    pub fn draw_filled_rect(&mut self, x1: u32, y1: u32, mut width: u32, mut height: u32) {
+        for i in 0..(height - 1 as u32) {
+            self.draw_h_line(x1, y1 + i, width);
+        }
     }
 
     pub fn draw_h_line(&mut self, x1: u32, y1: u32, width: u32){
@@ -160,7 +166,7 @@ impl FB {
         let w = self.check_w(x1, width);
         let index = self.find_point(x, y);
         let color = self.color.to_16b();
-        for i in 0..(w as usize) {
+        for i in 0..((w - 1) as usize) {
             self.frame[index + (2 * i)] = color as u8;
             self.frame[index + (2 * i) + 1] = (color >> 8) as u8;
         }
@@ -172,7 +178,7 @@ impl FB {
         let h = self.check_h(y1, height);
         let index = self.find_point(x, y);
         let color = self.color.to_16b();
-        for i in 0..(h as usize) {
+        for i in 0..((h - 1) as usize) {
             self.frame[index + (480 * i)] = color as u8;
             self.frame[index + (480 * i) + 1] = (color >> 8) as u8;
         }

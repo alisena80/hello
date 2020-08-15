@@ -54,7 +54,7 @@ fn main()  -> Result<(), Box<dyn Error>> {
                     Action::Pressed => {
                         match ba.code {
                             2 => {
-                                fb.draw_rect(90, 90, 90, 90);
+                                fb.draw_filled_rect(91, 90, 90, 90);
                                 fb.flush();
                             },
                             _ => ()
