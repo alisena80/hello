@@ -43,9 +43,8 @@ fn main()  -> Result<(), Box<dyn Error>> {
   });
   let mut fb = FB::new("/dev/fb1");
   fb.set_color(fb::Color::new(255,0,0));
-  fb.draw_rect(1, 1, 90, 90);
-  fb.flush();
-
+  let mut x1: u32 = 0;
+  let mut y1: u32 = 0;
   loop {
     match input_rx.try_recv() {
         Ok(button_actions) => {
@@ -54,13 +53,51 @@ fn main()  -> Result<(), Box<dyn Error>> {
                     Action::Pressed => {
                         match ba.code {
                             2 => {
-                                fb.draw_filled_rect(91, 90, 90, 90);
+                                if x1 > 0 {
+                                    x1 -= 1;
+                                }
+                                println!("x: {}", x1);
+                                fb.clear();
+                                fb.draw_filled_rect(x1, y1, 90, 90);
+                                fb.flush();
+                            },
+                            3 => {
+                                
+                                x1 += 1;
+                                println!("x: {}", x1);
+                                fb.clear();
+                                fb.draw_filled_rect(x1, y1, 90, 90);
                                 fb.flush();
                             },
                             _ => ()
                         }
                     },
-                    Action::Repeated => (),
+                    Action::Repeated => {
+                    
+                        match ba.code {
+                            2 => {
+                                if x1 > 10 {
+                                    x1 -= 10;
+                                } else {
+                                    x1 = 0;
+                                }
+                                println!("x: {}", x1);
+                                fb.clear();
+                                fb.draw_filled_rect(x1, y1, 90, 90);
+                                fb.flush();
+                            },
+                            3 => {
+                                
+                                x1 += 10;
+                                println!("x: {}", x1);
+                                fb.clear();
+                                fb.draw_filled_rect(x1, y1, 90, 90);
+                                fb.flush();
+                            },
+                            _ => ()
+                        }
+                    },
+
 
                     Action::Released => ()
                 }

@@ -147,6 +147,13 @@ impl FB {
         return h
     }
 
+    pub fn clear(&mut self) {
+        let orig_color = Color::new(self.color.r, self.color.g, self.color.b);
+        self.set_color(Color::new(self.background.r, self.background.g, self.background.b));
+        self.draw_filled_rect(0, 0, 240, 240);
+        self.set_color(orig_color);
+    }
+
     pub fn draw_rect(&mut self, x1: u32, y1: u32, mut width: u32, mut height: u32) {
         self.draw_h_line(x1, y1, width);
         self.draw_h_line(x1, y1 + height - 1, width);
