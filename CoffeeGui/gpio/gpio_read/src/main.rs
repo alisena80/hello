@@ -60,6 +60,8 @@ fn main()  -> Result<(), Box<dyn Error>> {
                             _ => ()
                         }
                     },
+                    Action::Repeated => (),
+
                     Action::Released => ()
                 }
             }
@@ -72,5 +74,6 @@ fn main()  -> Result<(), Box<dyn Error>> {
   };
 
 }
+
 
 
