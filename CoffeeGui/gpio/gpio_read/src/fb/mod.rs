@@ -170,7 +170,7 @@ impl FB {
     pub fn draw_h_line(&mut self, x1: u32, y1: u32, width: u32){
         let x = self.check_x(x1);
         let y = self.check_y(y1);
-        let w = self.check_w(x1, width);
+        let w = self.check_w(x, width);
         let index = self.find_point(x, y);
         let color = self.color.to_16b();
         for i in 0..((w - 1) as usize) {
@@ -182,7 +182,7 @@ impl FB {
     pub fn draw_v_line(&mut self, x1: u32, y1: u32, height: u32) {
         let x = self.check_x(x1);
         let y = self.check_y(y1);
-        let h = self.check_h(y1, height);
+        let h = self.check_h(y, height);
         let index = self.find_point(x, y);
         let color = self.color.to_16b();
         for i in 0..((h - 1) as usize) {
