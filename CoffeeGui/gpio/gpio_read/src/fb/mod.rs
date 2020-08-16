@@ -1,4 +1,3 @@
-use bmp::Image;
 use framebuffer::{Framebuffer};
 
 pub struct Color {
@@ -29,10 +28,6 @@ pub struct FB {
     ll: u32,
     bpp: u32,
     frame: Vec<u8>,
-    img: Image,
-    offset_x: u32,
-    offset_y: u32,
-    color: Color,
     background: Color
 }
 
@@ -47,7 +42,6 @@ impl FB {
         let bytespp = framebuffer.var_screen_info.bits_per_pixel / 8;
 
         let frame = vec![0u8; (line_length * h) as usize];
-        let img = bmp::open("pic/rust-logo.bmp").unwrap();
         FB {
             fb: framebuffer,
             w: w,
@@ -55,51 +49,8 @@ impl FB {
             ll: line_length,
             bpp: bytespp,
             frame: frame,
-            img: img,
-            offset_x: 0,
-            offset_y: 0,
-            color: Color::new(255,255,255),
             background: Color::new(0,0,0)
         } 
-    }
-
-    pub fn pan_image(&mut self, x: i32, y: i32){
-         //move x
-        let i32_x_total = self.offset_x as i32 + x;
-        if i32_x_total < 0 {
-            self.offset_x = 0;
-        } else {
-            self.offset_x = i32_x_total as u32;
-        }
-    
-        let i32_y_total = self.offset_y as i32 + y;
-        if i32_y_total < 0 {
-            self.offset_y = 0;
-        } else {    
-            self.offset_y = i32_y_total as u32;
-        }
-
-        if self.offset_x > self.w {
-            self.offset_x = self.w;
-        }
-        if self.offset_y > self.h {
-            self.offset_y = self.h;
-        }
-        self.draw_image();
-        self.flush(); 
-    }
-
-    pub fn draw_image(&mut self){
-        for (x, y) in self.img.coordinates() {
-            if x < 240 && y < 240 {
-                let px = self.img.get_pixel(x + self.offset_x, y + self.offset_y);
-                let start_index = ((y * self.ll) + (x * self.bpp)) as usize;
-                let color = Color::new(px.r, px.g, px.b);
-                let rgb565 = color.to_16b();
-                self.frame[start_index] = rgb565 as u8;
-                self.frame[start_index + 1] = (rgb565 >> 8) as u8;
-            }
-        }
     }
 
 
@@ -111,10 +62,6 @@ impl FB {
          ((y1 * self.ll) + (x1 * self.bpp)) as usize
     }
 
-
-    pub fn set_color(&mut self, color: Color){
-        self.color = color
-    }
 
     pub fn set_background(&mut self, color: Color){
         self.background = color
@@ -158,7 +105,7 @@ impl FB {
         self.draw_v_line(x1 + width - 1, y1, height, color);
     }
 
-    pub fn draw_filled_rect(&mut self, x1: u32, y1: u32, mut width: u32, mut height: u32, color: &Color) {
+    pub fn draw_filled_rect(&mut self, x1: u32, y1: u32, width: u32, height: u32, color: &Color) {
         for i in 0..(height - 1 as u32) {
             self.draw_h_line(x1, y1 + i, width, color);
         }
@@ -188,5 +135,21 @@ impl FB {
         }
     }
                   
-
+    pub fn render_image(&mut self, img: &bmp::Image, x1: u32, y1: u32, w1:u32, h1:u32, img_x:u32, img_y:u32){
+        let start_x = self.check_x(x1);
+        let start_y = self.check_y(y1);
+        let w = self.check_h(start_x, w1);
+        let h = self.check_h(start_y, h1);
+        
+        for x in start_x..(w - 1) {
+            for y in start_y..(h -1) {
+                let px = img.get_pixel(img_x + x, img_y + y);
+                let index = self.find_point(x,y);
+                let color = Color::new(px.r, px.g, px.b);
+                let rgb565 = color.to_16b();
+                self.frame[index] = rgb565 as u8;
+                self.frame[index + 1] = (rgb565 >> 8) as u8;
+            }
+        }
+    }
 }

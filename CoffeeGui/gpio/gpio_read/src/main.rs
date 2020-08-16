@@ -62,9 +62,30 @@ fn main()  -> Result<(), Box<dyn Error>> {
         Ok(button_actions) => {
             for ba in &button_actions { 
                 match ba.action {
-                    Action::Pressed => (canvas.render()),
+                    Action::Pressed => {
+                        match ba.code {
+                            2 => canvas.layers[0].item.slide(-1, 0),
+                            3 => canvas.layers[0].item.slide(1, 0),
+                            4 => canvas.layers[0].item.slide(0, -1),
+                            5 => canvas.layers[0].item.slide(0, 1),
+                            _ => ()
+                        };
+                        canvas.render();
+                        
+                    },
                     Action::Repeated => (),
-                    Action::Released => ()
+                    Action::Released => {
+                        match ba.code {
+                            2 => canvas.layers[0].item.slide(-10, 0),
+                            3 => canvas.layers[0].item.slide(10, 0),
+                            4 => canvas.layers[0].item.slide(0, -10),
+                            5 => canvas.layers[0].item.slide(0, 10),
+                            _ => ()
+                        };
+                        canvas.render();
+
+
+                    }
                 }
             }
             joy_pad::helpers::ba_to_console(button_actions, &button_initializers);
