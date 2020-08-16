@@ -40,6 +40,11 @@ impl Canvas {
         self.screen.flush();
 
     }
+
+    pub fn clear(&mut self){
+        self.screen.clear();
+        self.screen.flush();
+    }
 }
 
 

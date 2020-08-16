@@ -106,7 +106,7 @@ impl FB {
     }
 
     pub fn draw_filled_rect(&mut self, x1: u32, y1: u32, width: u32, height: u32, color: &Color) {
-        for i in 0..(height - 1 as u32) {
+        for i in 0..(height as u32) {
             self.draw_h_line(x1, y1 + i, width, color);
         }
     }
@@ -117,7 +117,7 @@ impl FB {
         let w = self.check_w(x, width);
         let index = self.find_point(x, y);
         let color = color.to_16b();
-        for i in 0..((w - 1) as usize) {
+        for i in 0..(w as usize) {
             self.frame[index + (2 * i)] = color as u8;
             self.frame[index + (2 * i) + 1] = (color >> 8) as u8;
         }
@@ -129,7 +129,7 @@ impl FB {
         let h = self.check_h(y, height);
         let index = self.find_point(x, y);
         let color = color.to_16b();
-        for i in 0..((h - 1) as usize) {
+        for i in 0..(h  as usize) {
             self.frame[index + (480 * i)] = color as u8;
             self.frame[index + (480 * i) + 1] = (color >> 8) as u8;
         }

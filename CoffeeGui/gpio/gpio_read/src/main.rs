@@ -46,6 +46,7 @@ fn main()  -> Result<(), Box<dyn Error>> {
 
   });
   let mut canvas = Canvas::new("/dev/fb1");
+  canvas.clear();
   canvas.layers.push(
     Layer::new(
         Box::new(
@@ -73,8 +74,7 @@ fn main()  -> Result<(), Box<dyn Error>> {
                         canvas.render();
                         
                     },
-                    Action::Repeated => (),
-                    Action::Released => {
+                    Action::Repeated => {
                         match ba.code {
                             2 => canvas.layers[0].item.slide(-10, 0),
                             3 => canvas.layers[0].item.slide(10, 0),
@@ -85,6 +85,9 @@ fn main()  -> Result<(), Box<dyn Error>> {
                         canvas.render();
 
 
+                    
+                    },
+                    Action::Released => {
                     }
                 }
             }
