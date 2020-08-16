@@ -121,14 +121,14 @@ impl FB {
     }
 
     fn check_x(&self, x: u32) -> u32 {
-        if x > self.w {
-            return self.w
+        if x >= self.w {
+            return self.w - 1
         }
         return x
     }
     fn check_y(&self, y: u32) -> u32 {
-        if y > self.h {
-            return  self.h
+        if y >= self.h {
+            return  self.h - 1
         }
         return y
     }
