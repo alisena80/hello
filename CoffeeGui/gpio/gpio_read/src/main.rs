@@ -8,9 +8,13 @@ use joy_pad::Pad;
 use joy_pad::ButtonInitializer;
 use joy_pad::Action;
 
-mod fb;
-use fb::FB;
 
+mod fb;
+mod canvas;
+use canvas::Canvas;
+use canvas::Layer;
+use canvas::Rect;
+use fb::Color;
 extern crate bmp;
 extern crate framebuffer;
 
@@ -41,64 +45,25 @@ fn main()  -> Result<(), Box<dyn Error>> {
             }
 
   });
-  let mut fb = FB::new("/dev/fb1");
-  fb.set_color(fb::Color::new(255,0,0));
-  let mut x1: u32 = 0;
-  let mut y1: u32 = 0;
+  let mut canvas = Canvas::new("/dev/fb1");
+  canvas.layers.push(
+    Layer::new(
+        Box::new(
+            Rect::new(
+                0,0,10,10, true, Color::new(255,255,0)
+            ),
+        ),
+        true
+    )
+  );
+
   loop {
     match input_rx.try_recv() {
         Ok(button_actions) => {
             for ba in &button_actions { 
                 match ba.action {
-                    Action::Pressed => {
-                        match ba.code {
-                            2 => {
-                                if x1 > 0 {
-                                    x1 -= 1;
-                                }
-                                println!("x: {}", x1);
-                                fb.clear();
-                                fb.draw_filled_rect(x1, y1, 90, 90);
-                                fb.flush();
-                            },
-                            3 => {
-                                
-                                x1 += 1;
-                                println!("x: {}", x1);
-                                fb.clear();
-                                fb.draw_filled_rect(x1, y1, 90, 90);
-                                fb.flush();
-                            },
-                            _ => ()
-                        }
-                    },
-                    Action::Repeated => {
-                    
-                        match ba.code {
-                            2 => {
-                                if x1 > 10 {
-                                    x1 -= 10;
-                                } else {
-                                    x1 = 0;
-                                }
-                                println!("x: {}", x1);
-                                fb.clear();
-                                fb.draw_filled_rect(x1, y1, 90, 90);
-                                fb.flush();
-                            },
-                            3 => {
-                                
-                                x1 += 10;
-                                println!("x: {}", x1);
-                                fb.clear();
-                                fb.draw_filled_rect(x1, y1, 90, 90);
-                                fb.flush();
-                            },
-                            _ => ()
-                        }
-                    },
-
-
+                    Action::Pressed => (canvas.render()),
+                    Action::Repeated => (),
                     Action::Released => ()
                 }
             }

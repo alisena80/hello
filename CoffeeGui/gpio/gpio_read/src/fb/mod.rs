@@ -148,43 +148,40 @@ impl FB {
     }
 
     pub fn clear(&mut self) {
-        let orig_color = Color::new(self.color.r, self.color.g, self.color.b);
-        self.set_color(Color::new(self.background.r, self.background.g, self.background.b));
-        self.draw_filled_rect(0, 0, 240, 240);
-        self.set_color(orig_color);
+        self.draw_filled_rect(0, 0, 240, 240, &Color::new(self.background.r, self.background.g, self.background.b));
     }
 
-    pub fn draw_rect(&mut self, x1: u32, y1: u32, mut width: u32, mut height: u32) {
-        self.draw_h_line(x1, y1, width);
-        self.draw_h_line(x1, y1 + height - 1, width);
-        self.draw_v_line(x1, y1, height);
-        self.draw_v_line(x1 + width - 1, y1, height);
+    pub fn draw_rect(&mut self, x1: u32, y1: u32, width: u32,  height: u32, color: &Color) {
+        self.draw_h_line(x1, y1, width, color);
+        self.draw_h_line(x1, y1 + height - 1, width, color);
+        self.draw_v_line(x1, y1, height, color);
+        self.draw_v_line(x1 + width - 1, y1, height, color);
     }
 
-    pub fn draw_filled_rect(&mut self, x1: u32, y1: u32, mut width: u32, mut height: u32) {
+    pub fn draw_filled_rect(&mut self, x1: u32, y1: u32, mut width: u32, mut height: u32, color: &Color) {
         for i in 0..(height - 1 as u32) {
-            self.draw_h_line(x1, y1 + i, width);
+            self.draw_h_line(x1, y1 + i, width, color);
         }
     }
 
-    pub fn draw_h_line(&mut self, x1: u32, y1: u32, width: u32){
+    pub fn draw_h_line(&mut self, x1: u32, y1: u32, width: u32, color: &Color){
         let x = self.check_x(x1);
         let y = self.check_y(y1);
         let w = self.check_w(x, width);
         let index = self.find_point(x, y);
-        let color = self.color.to_16b();
+        let color = color.to_16b();
         for i in 0..((w - 1) as usize) {
             self.frame[index + (2 * i)] = color as u8;
             self.frame[index + (2 * i) + 1] = (color >> 8) as u8;
         }
     }
 
-    pub fn draw_v_line(&mut self, x1: u32, y1: u32, height: u32) {
+    pub fn draw_v_line(&mut self, x1: u32, y1: u32, height: u32, color: &Color) {
         let x = self.check_x(x1);
         let y = self.check_y(y1);
         let h = self.check_h(y, height);
         let index = self.find_point(x, y);
-        let color = self.color.to_16b();
+        let color = color.to_16b();
         for i in 0..((h - 1) as usize) {
             self.frame[index + (480 * i)] = color as u8;
             self.frame[index + (480 * i) + 1] = (color >> 8) as u8;
