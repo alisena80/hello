@@ -54,8 +54,21 @@ fn main()  -> Result<(), Box<dyn Error>> {
                 0,0,10,10, true, Color::new(255,255,0)
             ),
         ),
-        true
+        true,
+        "box"
     )
+);
+  canvas.layers.push(
+    Layer::new(
+        Box::new(
+            Rect::new(
+                20,20,10,10, false, Color::new(255,0,0)
+            ),
+        ),
+        true,
+        "box"
+    )
+
   );
 
   loop {
@@ -65,10 +78,10 @@ fn main()  -> Result<(), Box<dyn Error>> {
                 match ba.action {
                     Action::Pressed => {
                         match ba.code {
-                            2 => canvas.layers[0].item.slide(-1, 0),
-                            3 => canvas.layers[0].item.slide(1, 0),
-                            4 => canvas.layers[0].item.slide(0, -1),
-                            5 => canvas.layers[0].item.slide(0, 1),
+                            2 => canvas.slide_layer_group("box", -1, 0),
+                            3 => canvas.slide_layer_group("box", 1, 0),
+                            4 => canvas.slide_layer_group("box", 0, -1),
+                            5 => canvas.slide_layer_group("box", 0, 1),
                             _ => ()
                         };
                         canvas.render();
@@ -76,10 +89,10 @@ fn main()  -> Result<(), Box<dyn Error>> {
                     },
                     Action::Repeated => {
                         match ba.code {
-                            2 => canvas.layers[0].item.slide(-10, 0),
-                            3 => canvas.layers[0].item.slide(10, 0),
-                            4 => canvas.layers[0].item.slide(0, -10),
-                            5 => canvas.layers[0].item.slide(0, 10),
+                            2 => canvas.slide_layer_group("box", -10, 0),
+                            3 => canvas.slide_layer_group("box", 10, 0),
+                            4 => canvas.slide_layer_group("box", 0, -10),
+                            5 => canvas.slide_layer_group("box", 0, 10),
                             _ => ()
                         };
                         canvas.render();

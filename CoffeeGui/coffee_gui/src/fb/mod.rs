@@ -62,7 +62,7 @@ impl FB {
          ((y1 * self.ll) + (x1 * self.bpp)) as usize
     }
 
-
+    #[allow(dead_code)]
     pub fn set_background(&mut self, color: Color){
         self.background = color
     }

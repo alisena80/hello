@@ -6,13 +6,14 @@ use super::fb::Color;
 // Layer
 pub struct Layer<T> {
     pub item: Box<T>,
-    pub active: bool
+    pub active: bool,
+    pub group: &'static str
 }
 
 
 impl<T> Layer<T> {
-    pub fn new(item: T, active: bool) -> Layer<T>{
-        Layer{item: Box::new(item), active}
+    pub fn new(item: T, active: bool, group: &'static str) -> Layer<T>{
+        Layer{item: Box::new(item), active, group}
     }
 }
 
@@ -46,6 +47,17 @@ impl Canvas {
         self.screen.clear();
         self.screen.flush();
     }
+
+    pub fn slide_layer_group(&mut self, group: &'static str, x: i32, y: i32) {
+        for layer in &mut self.layers {
+            if layer.group == group {
+                layer.item.slide(x, y);
+            }
+        }
+
+    }
+
+
 }
 
 
@@ -80,7 +92,7 @@ impl Draw for Rect {
             fb.draw_rect(self.x, self.y, self.w, self.h, &self.color);
         }
     }
-    fn slide(&mut self, x:i32, y: i32) {
+    fn slide(&mut self, x: i32, y: i32) {
         //move x
         let i32_x_total = self.x as i32 + x;
         if i32_x_total < 0 {
@@ -116,6 +128,7 @@ pub struct Image {
 }
 
 impl Image {
+    #[allow(dead_code)] 
     pub fn new(path: &'static str, x: u32, y: u32, w: u32, h: u32, img_x: u32, img_y: u32 ) -> Image {
         let img = bmp::open(path).unwrap();
         Image {
