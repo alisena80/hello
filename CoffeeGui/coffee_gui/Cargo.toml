@@ -1,5 +1,5 @@
 [package]
-name = "CoffeeUI"
+name = "coffee_gui"
 version = "0.1.0"
 authors = ["David P. Smith"]
 edition = "2018"

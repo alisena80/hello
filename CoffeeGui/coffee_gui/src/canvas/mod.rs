@@ -1,3 +1,4 @@
+#[allow(dead_code)]
 use super::fb::FB;
 use super::fb::Color;
 
