@@ -23,8 +23,8 @@ impl Color {
 
 pub struct FB {
     fb: Framebuffer,
-    w: u32,
-    h: u32,
+    pub w: u32,
+    pub h: u32,
     ll: u32,
     bpp: u32,
     frame: Vec<u8>,

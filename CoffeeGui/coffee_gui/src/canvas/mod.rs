@@ -69,46 +69,82 @@ pub trait Draw {
 
 // Rectangles
 pub struct Rect {
-    pub x: u32,
-    pub y: u32,
-    pub w: u32,
-    pub h: u32,
+    pub x: i32,
+    pub y: i32,
+    pub w: i32,
+    pub h: i32,
     pub filled: bool,
     pub color: Color
 }
 
 
 impl Rect {
-    pub fn new(x: u32, y: u32, w: u32, h: u32, filled: bool, color: Color) -> Rect {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, filled: bool, color: Color) -> Rect {
         Rect {x ,y, w, h, filled, color}
+    }
+
+    fn clipped(&self, fb: &mut FB) -> Option<(u32, u32, u32, u32)>{
+        let x: u32;
+        let y: u32;
+        let mut w: u32;
+        let mut h: u32;
+
+        // determine how much if any of the object is on screen
+        // x negative direction
+
+        if self.x < 0 {
+            x = 0;
+            w = (self.w + self.x) as u32;
+        } else if self.x >= fb.w as i32 {  // x positive direction
+            return None
+        } else {
+            x = self.x as u32;
+            w = self.w as u32;            
+        }
+        // width greater than display
+        if x + w > fb.w {
+            w = fb.w - x;
+        } 
+
+        // y negative direction
+        if self.y < 0 {
+            y = 0;
+            h = (self.h + self.y) as u32;
+        } else if self.y >= fb.h as i32 {  // y positive direction
+            return None
+        } else {
+            y = self.y as u32;
+            h = self.h as u32;            
+        }
+        // width greater than display
+        if y + h > fb.h {
+            h = fb.h - y;
+        } 
+        Some((x, y, w, h))
     }
 }
 
 impl Draw for Rect {
     fn draw(&self, fb: &mut FB){
-        if self.filled {
-            fb.draw_filled_rect(self.x, self.y, self.w, self.h, &self.color );
-        } else {
-            fb.draw_rect(self.x, self.y, self.w, self.h, &self.color);
+        //clip actual coordinates to render what is on screen or do nothing
+        match self.clipped(fb) {
+            Some((x, y, w, h)) => {
+                if self.filled {
+                    fb.draw_filled_rect(x, y, w,h, &self.color );
+                } else {
+                    fb.draw_rect(x, y, w, h, &self.color);
+                }
+            },
+            None => ()
         }
+
     }
     fn slide(&mut self, x: i32, y: i32) {
         //move x
-        let i32_x_total = self.x as i32 + x;
-        if i32_x_total < 0 {
-            self.x = 0;
-        } else {
-            self.x = i32_x_total as u32;
-        }
-
+        self.x = self.x + x;
 
         //move y
-        let i32_y_total = self.y as i32 + y;
-        if i32_y_total < 0 {
-            self.y = 0;
-        } else {
-            self.y = i32_y_total as u32;
-        }      
+        self.y = self.y + y;
     }
        
 }
@@ -118,10 +154,10 @@ impl Draw for Rect {
 pub struct Image {
     img: bmp::Image,
     // where it goes on the canvas
-    x: u32,
-    y: u32,
-    w: u32,
-    h: u32, 
+    x: i32,
+    y: i32,
+    w: i32,
+    h: i32, 
     // where we sample from the image
     img_x: u32,
     img_y: u32
@@ -129,36 +165,71 @@ pub struct Image {
 
 impl Image {
     #[allow(dead_code)] 
-    pub fn new(path: &'static str, x: u32, y: u32, w: u32, h: u32, img_x: u32, img_y: u32 ) -> Image {
+    pub fn new(path: &'static str, x: i32, y: i32, w: i32, h: i32, img_x: u32, img_y: u32 ) -> Image {
         let img = bmp::open(path).unwrap();
         Image {
             img, x, y, w, h, img_x, img_y
         }
     }
+    fn clipped(&self, fb: &mut FB) -> Option<(u32, u32, u32, u32)>{
+        let x: u32;
+        let y: u32;
+        let mut w: u32;
+        let mut h: u32;
+
+        // determine how much if any of the object is on screen
+        // x negative direction
+
+        if self.x < 0 {
+            x = 0;
+            w = (self.w + self.x) as u32;
+        } else if self.x >= fb.w as i32 {  // x positive direction
+            return None
+        } else {
+            x = self.x as u32;
+            w = self.w as u32;            
+        }
+        // width greater than display
+        if x + w > fb.w {
+            w = fb.w - x;
+        } 
+
+        // y negative direction
+        if self.y < 0 {
+            y = 0;
+            h = (self.h + self.y) as u32;
+        } else if self.y >= fb.h as i32 {  // y positive direction
+            return None
+        } else {
+            y = self.y as u32;
+            h = self.h as u32;            
+        }
+        // width greater than display
+        if y + h > fb.h {
+            h = fb.h - y;
+        } 
+        Some((x, y, w, h))
+    }
+
 }
 
 impl Draw for Image {
     fn draw(&self, fb: &mut FB){
-        fb.render_image(&self.img, self.x, self.y, self.w, self.h, self.img_x, self.img_y)
+        match self.clipped(fb) {
+            Some((x, y, w, h)) => {
+                    fb.render_image(&self.img, x, y, w, h, self.img_x, self.img_y)
+                },
+            None => ()
+        }
     }
     fn slide(&mut self, x: i32, y: i32) {
         //move x
-        let i32_x_total = self.x as i32 + x;
-        if i32_x_total < 0 {
-            self.x = 0;
-        } else {
-            self.x = i32_x_total as u32;
-        }
-
+        self.x = self.x + x;
 
         //move y
-        let i32_y_total = self.y as i32 + y;
-        if i32_y_total < 0 {
-            self.y = 0;
-        } else {
-            self.y = i32_y_total as u32;
-        }      
+        self.y = self.y + y;
     }
+
 }
 
 /* old image code
