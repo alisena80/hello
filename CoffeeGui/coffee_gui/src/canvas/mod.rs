@@ -93,8 +93,12 @@ impl Rect {
         // x negative direction
 
         if self.x < 0 {
-            x = 0;
-            w = (self.w + self.x) as u32;
+            if self.x + self.w <= 0 {
+                return None
+            } else {
+                x = 0;
+                w = (self.w + self.x) as u32;
+            }
         } else if self.x >= fb.w as i32 {  // x positive direction
             return None
         } else {
@@ -108,8 +112,12 @@ impl Rect {
 
         // y negative direction
         if self.y < 0 {
-            y = 0;
-            h = (self.h + self.y) as u32;
+            if self.y + self.h <= 0 {
+                return None
+            } else {
+                y = 0;
+                h = (self.h + self.y) as u32;
+            }
         } else if self.y >= fb.h as i32 {  // y positive direction
             return None
         } else {
