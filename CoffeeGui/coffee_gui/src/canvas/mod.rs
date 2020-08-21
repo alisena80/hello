@@ -140,7 +140,30 @@ impl Draw for Rect {
                 if self.filled {
                     fb.draw_filled_rect(x, y, w,h, &self.color );
                 } else {
-                    fb.draw_rect(x, y, w, h, &self.color);
+                    //only if x y w and h can we draw_rect ... otherwise we must do lines
+                    if self.x as u32 == x && self.y as u32 == y && self.w as u32 == w && self.h as u32 == h { 
+                        fb.draw_rect(x, y, w, h, &self.color);
+                        return ()
+                    }
+                    // check left
+                    if self.x >= 0 && self.x < fb.w as i32 {
+                        //render left
+                    }
+                    // check top
+                    if self.y >= 0 && self.y < fb.h as i32 {
+                        // render top
+
+                    }
+                    // check right
+                    if self.x + self.w < fb.w as i32 && self.x + self.h >= 0 {
+                        //render right
+
+                    }
+                    // check bottom
+                    if self.y + self.h < fb.h as i32 && self.y + self.h >= 0 {
+                        //render bottom
+                    }
+
                 }
             },
             None => ()
