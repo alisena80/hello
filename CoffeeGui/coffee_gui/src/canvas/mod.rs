@@ -148,20 +148,23 @@ impl Draw for Rect {
                     // check left
                     if self.x >= 0 && self.x < fb.w as i32 {
                         //render left
+                        fb.draw_v_line(x, y, h, &self.color)
                     }
                     // check top
                     if self.y >= 0 && self.y < fb.h as i32 {
                         // render top
-
+                        fb.draw_h_line(x, y, w, &self.color)
                     }
                     // check right
                     if self.x + self.w < fb.w as i32 && self.x + self.h >= 0 {
                         //render right
+                        fb.draw_v_line(x + w - 1, y, h, &self.color)
 
                     }
                     // check bottom
                     if self.y + self.h < fb.h as i32 && self.y + self.h >= 0 {
                         //render bottom
+                        fb.draw_h_line(x, y + h -1, w, &self.color)
                     }
 
                 }
