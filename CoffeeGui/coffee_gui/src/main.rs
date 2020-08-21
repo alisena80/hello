@@ -71,6 +71,8 @@ fn main()  -> Result<(), Box<dyn Error>> {
 
   );
 
+//  canvas.layers.push(Layer::new(Box::new(Rect::new(  ))))
+
   loop {
     match input_rx.try_recv() {
         Ok(button_actions) => {
