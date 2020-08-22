@@ -89,7 +89,7 @@ fn main()  -> Result<(), Box<dyn Error>> {
   drop(canvas);
 
   let canvas_mutex_handler = Arc::clone(&canvas_mutex);
-  thread::spawn(move || {
+  let controller_thread = thread::spawn(move || {
   let mut rng = rand::thread_rng();
   loop {
     
@@ -131,6 +131,8 @@ fn main()  -> Result<(), Box<dyn Error>> {
     let float_x: i32  = rng.gen_range(-1, 2);
     let float_y: i32  = rng.gen_range(-1, 2);
     canvas.slide_layer_group("float", float_x, float_y);
+
+    canvas.render();
     thread::sleep(Duration::from_millis(5));
 
   };
@@ -138,16 +140,10 @@ fn main()  -> Result<(), Box<dyn Error>> {
   
 
   });
-  let canvas_mutex_render = Arc::clone(&canvas_mutex);
-  thread::spawn(move || {
-    loop {
-
-        let mut canvas = canvas_mutex_render.lock().unwrap();
-        canvas.render();
-        thread::sleep(Duration::from_millis(5));
+  match controller_thread.join() {
+        Ok(_) => (),
+        Err(_) => ()
     }
-  });
-
   Ok(())
 
 }
