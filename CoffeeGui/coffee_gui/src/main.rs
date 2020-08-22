@@ -18,6 +18,9 @@ use fb::Color;
 
 use rand::Rng;
 
+use std::sync::{Arc, Mutex};
+
+
 extern crate bmp;
 extern crate framebuffer;
 
@@ -48,40 +51,49 @@ fn main()  -> Result<(), Box<dyn Error>> {
             }
 
   });
-  let mut canvas = Canvas::new("/dev/fb1");
-  canvas.clear();
-  // random other things
-  canvas.layers.push(Layer::new(Box::new(Rect::new(55, 150, 50, 40, true,Color::new(255,55,25)),), true, "float"   ));
-  canvas.layers.push(Layer::new(Box::new(Rect::new(90, 200, 60, 80, true,Color::new(255,25,255)),), true, "float"   ));
-  canvas.layers.push(Layer::new(Box::new(Rect::new(9, 50, 100, 40, true,Color::new(25,255,255)),), true, "float"   ));
+  let canvas_mutex = Arc::new(Mutex::new(Canvas::new("/dev/fb1")));
+  let canvas_mutex_main = Arc::clone(&canvas_mutex);
 
-  canvas.layers.push(
-    Layer::new(
-        Box::new(
-            Rect::new(
-                0,0,40,40, true, Color::new(255,255,0)
+
+  // setup the canvas
+  let mut canvas = canvas_mutex_main.lock().unwrap();
+      canvas.clear();
+      // random other things
+      canvas.layers.push(Layer::new(Box::new(Rect::new(55, 150, 50, 40, true,Color::new(255,55,25)),), true, "float"   ));
+      canvas.layers.push(Layer::new(Box::new(Rect::new(90, 200, 60, 80, true,Color::new(255,25,255)),), true, "float"   ));
+      canvas.layers.push(Layer::new(Box::new(Rect::new(9, 50, 100, 40, true,Color::new(25,255,255)),), true, "float"   ));
+
+      canvas.layers.push(
+        Layer::new(
+            Box::new(
+                Rect::new(
+                    0,0,40,40, true, Color::new(255,255,0)
+                ),
             ),
-        ),
-        true,
-        "box"
-    )
-);
-  canvas.layers.push(
-    Layer::new(
-        Box::new(
-            Rect::new(
-                20,20,40,40, false, Color::new(255,0,0)
+            true,
+            "box"
+        )
+    );
+      canvas.layers.push(
+        Layer::new(
+            Box::new(
+                Rect::new(
+                    20,20,40,40, false, Color::new(255,0,0)
+                ),
             ),
-        ),
-        true,
-        "box"
-    )
+            true,
+            "box"
+        )
 
-  );
+      );
+  drop(canvas);
 
-
+  let canvas_mutex_handler = Arc::clone(&canvas_mutex);
+  thread::spawn(move || {
   let mut rng = rand::thread_rng();
   loop {
+    
+    let mut canvas = canvas_mutex_handler.lock().unwrap();
     match input_rx.try_recv() {
         Ok(button_actions) => {
             for ba in &button_actions { 
@@ -116,13 +128,27 @@ fn main()  -> Result<(), Box<dyn Error>> {
         },
         Err(_) => ()
     }
-    let mut float_x: i32  = rng.gen_range(-1, 2);
-    let mut float_y: i32  = rng.gen_range(-1, 2);
+    let float_x: i32  = rng.gen_range(-1, 2);
+    let float_y: i32  = rng.gen_range(-1, 2);
     canvas.slide_layer_group("float", float_x, float_y);
-    canvas.render();
     thread::sleep(Duration::from_millis(5));
 
   };
+
+  
+
+  });
+  let canvas_mutex_render = Arc::clone(&canvas_mutex);
+  thread::spawn(move || {
+    loop {
+
+        let mut canvas = canvas_mutex_render.lock().unwrap();
+        canvas.render();
+        thread::sleep(Duration::from_millis(5));
+    }
+  });
+
+  Ok(())
 
 }
 

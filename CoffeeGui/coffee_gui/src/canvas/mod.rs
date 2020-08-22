@@ -20,17 +20,16 @@ impl<T> Layer<T> {
 // Canvas
 pub struct Canvas {
     screen: FB,
-    pub layers: Vec<Layer<Box<dyn Draw>>>
+    pub layers: Vec<Layer<Box<dyn Draw + Send>>>
 }
 
 impl Canvas {
     pub fn new(dev: &'static str) -> Canvas{
         let fb = FB::new(dev);
-        let layers: Vec<Layer<Box<dyn Draw>>> = vec![];
+        let layers: Vec<Layer<Box<dyn Draw + Send>>> = vec![];
         Canvas {
             screen: fb,
-            layers
-            
+            layers    
         }
     }
 
@@ -54,10 +53,7 @@ impl Canvas {
                 layer.item.slide(x, y);
             }
         }
-
     }
-
-
 }
 
 
@@ -76,7 +72,6 @@ pub struct Rect {
     pub filled: bool,
     pub color: Color
 }
-
 
 impl Rect {
     pub fn new(x: i32, y: i32, w: i32, h: i32, filled: bool, color: Color) -> Rect {
@@ -105,6 +100,7 @@ impl Rect {
             x = self.x as u32;
             w = self.w as u32;            
         }
+
         // width greater than display
         if x + w > fb.w {
             w = fb.w - x;
@@ -205,6 +201,7 @@ impl Image {
             img, x, y, w, h, img_x, img_y
         }
     }
+
     fn clipped(&self, fb: &mut FB) -> Option<(u32, u32, u32, u32)>{
         let x: u32;
         let y: u32;
@@ -244,7 +241,6 @@ impl Image {
         } 
         Some((x, y, w, h))
     }
-
 }
 
 impl Draw for Image {
