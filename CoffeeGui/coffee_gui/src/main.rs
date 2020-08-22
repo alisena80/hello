@@ -51,15 +51,15 @@ fn main()  -> Result<(), Box<dyn Error>> {
   let mut canvas = Canvas::new("/dev/fb1");
   canvas.clear();
   // random other things
-  canvas.layers.push(Layer::new(Box::new(Rect::new(89, 150, 30, 10, true,Color::new(255,255,25)),), true, "float"   ));
-  canvas.layers.push(Layer::new(Box::new(Rect::new(90, 200, 10, 40, true,Color::new(255,25,255)),), true, "float"   ));
-  canvas.layers.push(Layer::new(Box::new(Rect::new(9, 150, 60, 4, true,Color::new(25,255,255)),), true, "float"   ));
+  canvas.layers.push(Layer::new(Box::new(Rect::new(55, 150, 50, 40, true,Color::new(255,55,25)),), true, "float"   ));
+  canvas.layers.push(Layer::new(Box::new(Rect::new(90, 200, 60, 80, true,Color::new(255,25,255)),), true, "float"   ));
+  canvas.layers.push(Layer::new(Box::new(Rect::new(9, 50, 100, 40, true,Color::new(25,255,255)),), true, "float"   ));
 
   canvas.layers.push(
     Layer::new(
         Box::new(
             Rect::new(
-                0,0,10,10, true, Color::new(255,255,0)
+                0,0,40,40, true, Color::new(255,255,0)
             ),
         ),
         true,
@@ -70,7 +70,7 @@ fn main()  -> Result<(), Box<dyn Error>> {
     Layer::new(
         Box::new(
             Rect::new(
-                20,20,10,10, false, Color::new(255,0,0)
+                20,20,40,40, false, Color::new(255,0,0)
             ),
         ),
         true,
@@ -80,6 +80,7 @@ fn main()  -> Result<(), Box<dyn Error>> {
   );
 
 
+  let mut rng = rand::thread_rng();
   loop {
     match input_rx.try_recv() {
         Ok(button_actions) => {
@@ -115,9 +116,8 @@ fn main()  -> Result<(), Box<dyn Error>> {
         },
         Err(_) => ()
     }
-    let mut rng = rand::thread_rng();
-    let float_x: i32  = rng.gen_range(-300, 340);
-    let float_y: i32  = rng.gen_range(-300, 300);
+    let mut float_x: i32  = rng.gen_range(-1, 2);
+    let mut float_y: i32  = rng.gen_range(-1, 2);
     canvas.slide_layer_group("float", float_x, float_y);
     canvas.render();
     thread::sleep(Duration::from_millis(5));
