@@ -15,6 +15,9 @@ use canvas::Canvas;
 use canvas::Layer;
 use canvas::Rect;
 use fb::Color;
+
+use rand::Rng;
+
 extern crate bmp;
 extern crate framebuffer;
 
@@ -47,6 +50,11 @@ fn main()  -> Result<(), Box<dyn Error>> {
   });
   let mut canvas = Canvas::new("/dev/fb1");
   canvas.clear();
+  // random other things
+  canvas.layers.push(Layer::new(Box::new(Rect::new(89, 150, 30, 10, true,Color::new(255,255,25)),), true, "float"   ));
+  canvas.layers.push(Layer::new(Box::new(Rect::new(90, 200, 10, 40, true,Color::new(255,25,255)),), true, "float"   ));
+  canvas.layers.push(Layer::new(Box::new(Rect::new(9, 150, 60, 4, true,Color::new(25,255,255)),), true, "float"   ));
+
   canvas.layers.push(
     Layer::new(
         Box::new(
@@ -71,7 +79,6 @@ fn main()  -> Result<(), Box<dyn Error>> {
 
   );
 
-//  canvas.layers.push(Layer::new(Box::new(Rect::new(  ))))
 
   loop {
     match input_rx.try_recv() {
@@ -86,7 +93,6 @@ fn main()  -> Result<(), Box<dyn Error>> {
                             5 => canvas.slide_layer_group("box", 0, 1),
                             _ => ()
                         };
-                        canvas.render();
                         
                     },
                     Action::Repeated => {
@@ -97,7 +103,6 @@ fn main()  -> Result<(), Box<dyn Error>> {
                             5 => canvas.slide_layer_group("box", 0, 10),
                             _ => ()
                         };
-                        canvas.render();
 
 
                     
@@ -110,6 +115,11 @@ fn main()  -> Result<(), Box<dyn Error>> {
         },
         Err(_) => ()
     }
+    let mut rng = rand::thread_rng();
+    let float_x: i32  = rng.gen_range(-300, 340);
+    let float_y: i32  = rng.gen_range(-300, 300);
+    canvas.slide_layer_group("float", float_x, float_y);
+    canvas.render();
     thread::sleep(Duration::from_millis(5));
 
   };
