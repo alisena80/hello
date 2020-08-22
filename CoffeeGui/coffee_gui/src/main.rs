@@ -51,49 +51,45 @@ fn main()  -> Result<(), Box<dyn Error>> {
             }
 
   });
-  let canvas_mutex = Arc::new(Mutex::new(Canvas::new("/dev/fb1")));
-  let canvas_mutex_main = Arc::clone(&canvas_mutex);
 
 
   // setup the canvas
-  let mut canvas = canvas_mutex_main.lock().unwrap();
-      canvas.clear();
-      // random other things
-      canvas.layers.push(Layer::new(Box::new(Rect::new(55, 150, 50, 40, true,Color::new_rgba(255,55,25, 150)),), true, "float"   ));
-      canvas.layers.push(Layer::new(Box::new(Rect::new(90, 200, 60, 80, true,Color::new_rgba(255,25,255, 10)),), true, "float"   ));
-      canvas.layers.push(Layer::new(Box::new(Rect::new(9, 50, 100, 40, true,Color::new_rgba(25,255,255, 200)),), true, "float"   ));
 
-      canvas.layers.push(
-        Layer::new(
-            Box::new(
-                Rect::new(
-                    0,0,40,40, true, Color::new_rgba(255,255,0, 180)
-                ),
-            ),
-            true,
-            "box"
-        )
-    );
-      canvas.layers.push(
-        Layer::new(
-            Box::new(
-                Rect::new(
-                    20,20,40,40, false, Color::new(255,0,0)
-                ),
-            ),
-            true,
-            "box"
-        )
-
-      );
-  drop(canvas);
-
-  let canvas_mutex_handler = Arc::clone(&canvas_mutex);
   let controller_thread = thread::spawn(move || {
   let mut rng = rand::thread_rng();
+  let mut canvas = Canvas::new("/dev/fb1");
+  canvas.clear();
+  // random other things
+  canvas.layers.push(Layer::new(Box::new(Rect::new(55, 150, 50, 40, true,Color::new(255,55,25)),), true, "float"   ));
+  canvas.layers.push(Layer::new(Box::new(Rect::new(90, 200, 60, 80, true,Color::new(255,25,255)),), true, "float"   ));
+  canvas.layers.push(Layer::new(Box::new(Rect::new(9, 50, 100, 40, true,Color::new(25,255,255)),), true, "float"   ));
+
+  canvas.layers.push(
+    Layer::new(
+        Box::new(
+            Rect::new(
+                0,0,40,40, true, Color::new_rgba(255,255,0, 180)
+            ),
+        ),
+        true,
+        "box"
+    )
+  );
+  canvas.layers.push(
+    Layer::new(
+        Box::new(
+            Rect::new(
+                20,20,40,40, false, Color::new(255,0,0)
+            ),
+        ),
+        true,
+        "box"
+    )
+
+  );
+
   loop {
     
-    let mut canvas = canvas_mutex_handler.lock().unwrap();
     match input_rx.try_recv() {
         Ok(button_actions) => {
             for ba in &button_actions { 

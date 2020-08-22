@@ -16,9 +16,9 @@ impl Color {
     }
 
     pub fn to_16b(&self) -> u16 {
-        let r: u8 = ((31.0 * self.r as f32) / 255 as f32) as u8;
-        let g: u8 = ((63.0 * self.g as f32) / 255 as f32) as u8;
-        let b: u8 = ((31.0 * self.b as f32) / 255 as f32) as u8; 
+        let r: u8 = (((31000 * self.r as u32) / 255 as u32) / 1000) as u8;
+        let g: u8 = (((63000 * self.g as u32) / 255 as u32) / 1000) as u8;
+        let b: u8 = (((31000 * self.b as u32) / 255 as u32) / 1000) as u8; 
         let rgb565: u16 = ((r as u16) << 11) + ((g as u16) << 5) + b as u16;
         rgb565
     }
@@ -32,9 +32,9 @@ impl Color {
         let r5: u8 = ((color >> 8) as u8) >> 3;
         
 
-        let r = (r5 as f32 * 255.0 / 31.0) as u8;
-        let g = (g6 as f32 * 255.0 / 63.0) as u8;
-        let b = (b5 as f32 * 255.0 / 31.0) as u8;
+        let r = ((r5 as u32 * (255000) / 31) / 1000 ) as u8;
+        let g = ((g6 as u32 * (255000) / 63) / 1000 ) as u8;
+        let b = ((b5 as u32 * (255000) / 31) / 1000 ) as u8;
         Color::new(r,g,b)
     }
     pub fn add(&self, color: &Color) -> Color {
@@ -43,13 +43,21 @@ impl Color {
             return Color::new(color.r, color.g, color.b)
         }
         
-        let r = self.r + (color.r as f32 * (color.a as f32 / 255.0)) as u8;   
-        let g = self.g + (color.g as f32 * (color.a as f32 / 255.0)) as u8;  
-        let b = self.b + (color.b as f32 * (color.a as f32 / 255.0)) as u8;   
-        Color::new_rgba(r,g,b, self.a)
+        let r = or_255(((self.r as i32 * 1000) * (1000 -  ((color.a as i32 * 1000) / 255)) + (color.r as i32 * ((color.a as i32 * 1000) / 255)) / 1000) as u16);   
+        let g = or_255(((self.g as i32 * 1000) * (1000 -  ((color.a as i32 * 1000) / 255)) + (color.g as i32 * ((color.a as i32 * 1000) / 255)) / 1000) as u16);  
+        let b = or_255(((self.b as i32 * 1000) * (1000 -  ((color.a as i32 * 1000) / 255)) + (color.b as i32 * ((color.a as i32 * 1000) / 255)) / 1000) as u16);
+
+        Color::new_rgba(r, g, b, self.a)
+    }
+
+}
+fn or_255(sp: u16) -> u8 {
+    if sp > 255 {
+        255
+    } else {
+        sp as u8
     }
 }
-
 pub struct FB {
     fb: Framebuffer,
     pub w: u32,
