@@ -18,7 +18,7 @@ use fb::Color;
 
 use rand::Rng;
 
-use std::sync::{Arc, Mutex};
+//use std::sync::{Arc, Mutex};
 
 
 extern crate bmp;

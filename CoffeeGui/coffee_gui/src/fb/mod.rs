@@ -43,9 +43,9 @@ impl Color {
             return Color::new(color.r, color.g, color.b)
         }
         
-        let r = or_255(((self.r as i32 * 1000) * (1000 -  ((color.a as i32 * 1000) / 255)) + (color.r as i32 * ((color.a as i32 * 1000) / 255)) / 1000) as u16);   
-        let g = or_255(((self.g as i32 * 1000) * (1000 -  ((color.a as i32 * 1000) / 255)) + (color.g as i32 * ((color.a as i32 * 1000) / 255)) / 1000) as u16);  
-        let b = or_255(((self.b as i32 * 1000) * (1000 -  ((color.a as i32 * 1000) / 255)) + (color.b as i32 * ((color.a as i32 * 1000) / 255)) / 1000) as u16);
+        let r = or_255(((self.r as i32 * 1000) * ((1000 -  ((color.a as i32 * 1000) / 255)) / 1000) + (color.r as i32 * ((color.a as i32 * 1000) / 255)) / 1000) as u16);   
+        let g = or_255(((self.g as i32 * 1000) * ((1000 -  ((color.a as i32 * 1000) / 255)) / 1000) + (color.g as i32 * ((color.a as i32 * 1000) / 255)) / 1000) as u16);  
+        let b = or_255(((self.b as i32 * 1000) * ((1000 -  ((color.a as i32 * 1000) / 255)) / 1000)+ (color.b as i32 * ((color.a as i32 * 1000) / 255)) / 1000) as u16);
 
         Color::new_rgba(r, g, b, self.a)
     }
