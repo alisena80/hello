@@ -59,15 +59,15 @@ fn main()  -> Result<(), Box<dyn Error>> {
   let mut canvas = canvas_mutex_main.lock().unwrap();
       canvas.clear();
       // random other things
-      canvas.layers.push(Layer::new(Box::new(Rect::new(55, 150, 50, 40, true,Color::new(255,55,25)),), true, "float"   ));
-      canvas.layers.push(Layer::new(Box::new(Rect::new(90, 200, 60, 80, true,Color::new(255,25,255)),), true, "float"   ));
-      canvas.layers.push(Layer::new(Box::new(Rect::new(9, 50, 100, 40, true,Color::new(25,255,255)),), true, "float"   ));
+      canvas.layers.push(Layer::new(Box::new(Rect::new(55, 150, 50, 40, true,Color::new_rgba(255,55,25, 150)),), true, "float"   ));
+      canvas.layers.push(Layer::new(Box::new(Rect::new(90, 200, 60, 80, true,Color::new_rgba(255,25,255, 10)),), true, "float"   ));
+      canvas.layers.push(Layer::new(Box::new(Rect::new(9, 50, 100, 40, true,Color::new_rgba(25,255,255, 200)),), true, "float"   ));
 
       canvas.layers.push(
         Layer::new(
             Box::new(
                 Rect::new(
-                    0,0,40,40, true, Color::new(255,255,0)
+                    0,0,40,40, true, Color::new_rgba(255,255,0, 180)
                 ),
             ),
             true,

@@ -3,13 +3,16 @@ use framebuffer::{Framebuffer};
 pub struct Color {
     pub r: u8,
     pub g: u8,
-    pub b: u8
-
+    pub b: u8,
+    pub a: u8
 }
 
 impl Color {
     pub fn new(r: u8, g: u8, b: u8) -> Color {
-        Color {r, g, b}
+        Color {r, g, b, a: 255}
+    }
+    pub fn new_rgba(r: u8, g: u8, b: u8, a: u8) -> Color {
+        Color {r, g, b, a}
     }
 
     pub fn to_16b(&self) -> u16 {
@@ -18,6 +21,32 @@ impl Color {
         let b: u8 = ((31.0 * self.b as f32) / 255 as f32) as u8; 
         let rgb565: u16 = ((r as u16) << 11) + ((g as u16) << 5) + b as u16;
         rgb565
+    }
+    pub fn from_16b(color: u16) -> Color{
+        // |-----|---\---|-----|
+        // |--|------\|-----|000|
+        let b5: u8 = ((color << 3) as u8) >> 3;
+        // |000-----\|------|--|
+        let g6: u8 = ((color >> 3) as u8) >> 2;
+        // |00000000\|-----|---|
+        let r5: u8 = ((color >> 8) as u8) >> 3;
+        
+
+        let r = (r5 as f32 * 255.0 / 31.0) as u8;
+        let g = (g6 as f32 * 255.0 / 63.0) as u8;
+        let b = (b5 as f32 * 255.0 / 31.0) as u8;
+        Color::new(r,g,b)
+    }
+    pub fn add(&self, color: &Color) -> Color {
+        // new color occludes any base 
+        if color.a == 255 {
+            return Color::new(color.r, color.g, color.b)
+        }
+        
+        let r = self.r + (color.r as f32 * (color.a as f32 / 255.0)) as u8;   
+        let g = self.g + (color.g as f32 * (color.a as f32 / 255.0)) as u8;  
+        let b = self.b + (color.b as f32 * (color.a as f32 / 255.0)) as u8;   
+        Color::new_rgba(r,g,b, self.a)
     }
 }
 
@@ -53,7 +82,6 @@ impl FB {
         } 
     }
 
-
     pub fn flush(&mut self){
          let _ = self.fb.write_frame(&self.frame);
     }
@@ -73,6 +101,7 @@ impl FB {
         }
         return x
     }
+
     fn check_y(&self, y: u32) -> u32 {
         if y >= self.h {
             return  self.h - 1
@@ -116,10 +145,24 @@ impl FB {
         let y = self.check_y(y1);
         let w = self.check_w(x, width);
         let index = self.find_point(x, y);
-        let color = color.to_16b();
-        for i in 0..(w as usize) {
-            self.frame[index + (2 * i)] = color as u8;
-            self.frame[index + (2 * i) + 1] = (color >> 8) as u8;
+        if color.a == 255 {
+            let color = color.to_16b();
+            for i in 0..(w as usize) {
+                self.frame[index + (2 * i)] = color as u8;
+                self.frame[index + (2 * i) + 1] = (color >> 8) as u8;
+            }
+        } else {
+            for i in 0..(w as usize) {
+                let mut base_color: u16;
+
+                base_color = self.frame[index + (2 * i)] as u16;
+                base_color += (self.frame[index + (2 * i) + 1] as u16) << 8;
+                let base = Color::from_16b(base_color);
+                let added_color = base.add(color).to_16b();
+                self.frame[index + (2 * i)] = added_color as u8;
+                self.frame[index + (2 * i) + 1] = (added_color >> 8) as u8;
+
+            }
         }
     }
 
@@ -128,10 +171,24 @@ impl FB {
         let y = self.check_y(y1);
         let h = self.check_h(y, height);
         let index = self.find_point(x, y);
-        let color = color.to_16b();
-        for i in 0..(h  as usize) {
-            self.frame[index + (480 * i)] = color as u8;
-            self.frame[index + (480 * i) + 1] = (color >> 8) as u8;
+        if color.a == 255 {
+            let color = color.to_16b();
+            for i in 0..(h  as usize) {
+                self.frame[index + (480 * i)] = color as u8;
+                self.frame[index + (480 * i) + 1] = (color >> 8) as u8;
+            }
+        } else {
+            for i in 0..(h as usize) {
+                let mut base_color: u16;
+                base_color = self.frame[index + (480 * i)] as u16;
+                base_color += (self.frame[index + (480 * i) + 1] as u16) << 8;
+                let base = Color::from_16b(base_color);
+                let added_color = base.add(color).to_16b();
+                self.frame[index + (480 * i)] = added_color as u8;
+                self.frame[index + (480 * i) + 1] = (added_color >> 8) as u8;
+
+
+            }
         }
     }
                   
