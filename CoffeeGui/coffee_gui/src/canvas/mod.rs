@@ -265,7 +265,10 @@ pub struct Text {
     font: Font<'static>,
     scale: Scale,
     color: Color,
-    img: DynamicImage // we store the actual rasterized text here and enough to rerasterize later
+    img: DynamicImage, // we store the actual rasterized text here and enough to rerasterize later
+    img_x: u32,
+    img_y: u32
+
 }
 
 impl Text {
@@ -330,9 +333,11 @@ impl Text {
 
         let image = DynamicImage::ImageRgba8(img);
         // build the img
-        
+        let img_x = adjust_img_loc(x, 0, w);        
+
+        let img_y = adjust_img_loc(y, 0, h);
         Text {
-            x, y, w: w as i32, h: h as i32, content, scale, color, img: image, font
+            x, y, w: w as i32, h: h as i32, content, scale, color, img: image, font, img_x, img_y
         }
     }
 
@@ -394,15 +399,30 @@ impl Draw for Text {
     fn slide(&mut self, x: i32, y: i32) {
         //move x
         self.x = self.x + x;
-
+        self.img_x = adjust_img_loc(self.x, self.img_x, self.w as u32);        
         //move y
         self.y = self.y + y;
+        self.img_y = adjust_img_loc(self.y, self.img_y, self.h as u32);         
     }
+
 
     fn clipped(&self, fb: &FB) -> Option<(u32, u32, u32, u32)>{
-       clipper(self.x, self.y, self.w, self.h, fb.w, fb.h) 
+        clipper(self.x, self.y, self.w, self.h, fb.w, fb.h)
     }
 
+}
+
+pub fn adjust_img_loc(pt: i32, img_pt: u32, max: u32) -> u32 {
+    let mut new: u32;
+        if pt < 0 {
+            new = img_pt + (-1 * pt) as u32;
+        } else {
+            new = img_pt;
+        }
+        if new >= max {
+            new = max - 1;
+        }
+        new
 }
 
 
