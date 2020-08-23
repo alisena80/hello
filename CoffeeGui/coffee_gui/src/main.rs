@@ -18,14 +18,8 @@ use fb::Color;
 
 use rand::Rng;
 
-//use std::sync::{Arc, Mutex};
-
-
-extern crate bmp;
 extern crate framebuffer;
-
-
-
+extern crate image;
 
 
 fn main()  -> Result<(), Box<dyn Error>> { 

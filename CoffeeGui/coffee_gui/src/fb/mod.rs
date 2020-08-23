@@ -1,4 +1,6 @@
 use framebuffer::{Framebuffer};
+use image::{GenericImageView,  DynamicImage};
+
 
 pub struct Color {
     pub r: u8,
@@ -217,7 +219,7 @@ impl FB {
         }
     }
                   
-    pub fn render_image(&mut self, img: &bmp::Image, x1: u32, y1: u32, w1:u32, h1:u32, img_x:u32, img_y:u32){
+    pub fn render_image(&mut self, img: &DynamicImage, x1: u32, y1: u32, w1:u32, h1:u32, img_x:u32, img_y:u32){
         let start_x = self.check_x(x1);
         let start_y = self.check_y(y1);
         let w = self.check_h(start_x, w1);
@@ -227,10 +229,20 @@ impl FB {
             for y in start_y..(h -1) {
                 let px = img.get_pixel(img_x + x, img_y + y);
                 let index = self.find_point(x,y);
-                let color = Color::new(px.r, px.g, px.b);
-                let rgb565 = color.to_16b();
-                self.frame[index] = rgb565 as u8;
-                self.frame[index + 1] = (rgb565 >> 8) as u8;
+                let color = Color::new_rgba(px[0], px[1], px[2], px[3]);
+                if color.a == 255 {
+                    let rgb565 = color.to_16b();
+                    self.frame[index] = rgb565 as u8;
+                    self.frame[index + 1] = (rgb565 >> 8) as u8;
+                } else {
+                    let mut base_color: u16;
+                    base_color = self.frame[index] as u16;
+                    base_color += (self.frame[index + 1] as u16) << 8;
+                    let base = Color::from_16b(base_color);
+                    let added_color = base.add(&color).to_16b();
+                    self.frame[index] = added_color as u8;
+                    self.frame[index + 1] = (added_color >> 8) as u8;
+                }
             }
         }
     }

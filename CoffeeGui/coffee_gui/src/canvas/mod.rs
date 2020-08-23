@@ -1,6 +1,7 @@
 #[allow(dead_code)]
 use super::fb::FB;
 use super::fb::Color;
+use image::{DynamicImage};
 
 
 // Layer
@@ -182,7 +183,7 @@ impl Draw for Rect {
 
 // images
 pub struct Image {
-    img: bmp::Image,
+    img: DynamicImage,
     // where it goes on the canvas
     x: i32,
     y: i32,
@@ -196,7 +197,7 @@ pub struct Image {
 impl Image {
     #[allow(dead_code)] 
     pub fn new(path: &'static str, x: i32, y: i32, w: i32, h: i32, img_x: u32, img_y: u32 ) -> Image {
-        let img = bmp::open(path).unwrap();
+        let img =image::open(path).unwrap();
         Image {
             img, x, y, w, h, img_x, img_y
         }
