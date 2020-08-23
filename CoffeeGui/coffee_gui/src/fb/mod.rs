@@ -220,6 +220,7 @@ impl FB {
     }
                   
     pub fn render_image(&mut self, img: &DynamicImage, x1: u32, y1: u32, w1:u32, h1:u32, img_x:u32, img_y:u32){
+        println!("({}, {}) - Width: {}  - Height: {}, Offsets ({}. {})", x1, y1, w1, h1, img_x, img_y);
         let start_x = self.check_x(x1);
         let start_y = self.check_y(y1);
         let w = self.check_h(start_x, w1);
