@@ -71,7 +71,7 @@ fn main()  -> Result<(), Box<dyn Error>> {
     Layer::new(
         Box::new(
             Text::new(
-                0, 0, 14.0, "Hello World!", "./assets/fonts/Antic_Slab/AnticSlab-Regular.ttf", Color::new(255,255,255), 5
+                0, 0, 24.0, "Hello World!", "./assets/fonts/Antic_Slab/AnticSlab-Regular.ttf", Color::new(255,255,255), 5
             ),
         ),
         true,

@@ -429,7 +429,6 @@ pub fn adjust_img_loc(pt: i32, img_pt: u32, max: u32) -> u32 {
             new = img_pt;
         }
         if new >= max {
-            println!("greater than MAX: {}", max);
             new = max - 1;
         }
         return new
