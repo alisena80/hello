@@ -223,9 +223,11 @@ impl FB {
         println!("({}, {}) - Width: {}  - Height: {}, Offsets ({}. {})", x1, y1, w1, h1, img_x, img_y);
         let start_x = self.check_x(x1);
         let start_y = self.check_y(y1);
-        let w = self.check_h(start_x, w1);
+        let w = self.check_w(start_x, w1);
         let h = self.check_h(start_y, h1);
-        
+        if w <= 0 || h <= 0 {
+            return; //do not attempt to render a 0 w or 0 h box
+        }
         for x in 0..(w - 1) {
             for y in 0..(h - 1) {
                 let px = img.get_pixel(img_x + x, img_y + y);

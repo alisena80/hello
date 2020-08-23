@@ -382,7 +382,11 @@ fn clipper(ix: i32, iy: i32, iw: i32, ih: i32, fw: u32, fh: u32) -> Option<(u32,
         // width greater than display
         if y + h > fh {
             h = fh - y;
-        } 
+        }
+
+        if w < 1 || h < 1 {
+            return None;
+        }
         Some((x, y, w, h))
 
 
