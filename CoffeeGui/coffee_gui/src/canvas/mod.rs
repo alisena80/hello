@@ -1,7 +1,7 @@
 #[allow(dead_code)]
 use super::fb::FB;
 use super::fb::Color;
-use image::{DynamicImage, Rgba}; // rgba is used internally by rusttype and image
+use image::{DynamicImage, Rgba, RgbaImage}; // rgba is used internally by rusttype and image
 use rusttype::{point, Font, Scale};
 use std::fs::File;
 use std::io::Read;
@@ -256,7 +256,7 @@ impl Draw for Image {
 
 }
 
-struct Text {
+pub struct Text {
     x: i32,
     y: i32,
     w: i32,
@@ -269,7 +269,7 @@ struct Text {
 }
 
 impl Text {
-    pub fn new(x: i32, y: i32, w: i32, h: i32, size: f32, content: &'static str, font: &'static str, color: Color) -> Text {
+    pub fn new(x: i32, y: i32, size: f32, content: &'static str, font: &'static str, color: Color, padding: u32) -> Text {
         let mut file = File::open(font).expect("Font File Not Found");
         let mut font_data: Vec<u8> = vec![];
         file.read_to_end(&mut font_data).expect("Unable to Read Font File");
@@ -279,10 +279,60 @@ impl Text {
         // Rgba 
         let colour = (color.r, color.g, color.b, color.a);
 
+        let v_metrics = font.v_metrics(scale);
+
+        // layout the glyphs in a line with 20 pixels padding
+        let glyphs: Vec<_> = font
+            .layout(content, scale, point(20.0, 20.0 + v_metrics.ascent))
+            .collect();
+
+        // work out the layout size
+        let glyphs_height = (v_metrics.ascent - v_metrics.descent).ceil() as u32;
+        let glyphs_width = {
+            let min_x = glyphs
+                .first()
+                .map(|g| g.pixel_bounding_box().unwrap().min.x)
+                .unwrap();
+            let max_x = glyphs
+                .last()
+                .map(|g| g.pixel_bounding_box().unwrap().max.x)
+                .unwrap();
+            (max_x - min_x) as u32
+        };
+
+        // Create a new rgba image with some padding
+        let w: u32 = glyphs_width + padding;
+        let h: u32 = glyphs_height + padding;
+
+        let mut img = DynamicImage::new_rgba8(w, h).to_rgba();
+        
+        // Loop through the glyphs in the text, positing each one on a line
+        for glyph in glyphs {
+            if let Some(bounding_box) = glyph.pixel_bounding_box() {
+                // Draw the glyph into the image per-pixel by using the draw closure
+                glyph.draw(|x, y, v| {
+                    let alpha: u8;
+                    if colour.3  == 255 {
+                        alpha = (v * 255.0) as u8;
+                    } else {
+                        alpha = ((colour.3 as f32 / 255.0 ) * (1.0 - v) + (v * 255.0)) as u8; //not quite right ... need to look up formula
+                    }
+                    img.put_pixel(
+                        // Offset the position by the glyph bounding box
+                        x + bounding_box.min.x as u32,
+                        y + bounding_box.min.y as u32,
+                        // Turn the coverage into an alpha value
+                        Rgba([colour.0, colour.1, colour.2, alpha]),
+                    )
+                });
+            }
+        }
+
+        let image = DynamicImage::ImageRgba8(img);
         // build the img
-        let mut img: DynamicImage;
+        
         Text {
-            x, y, w, h, content, scale, color, img, font
+            x, y, w: w as i32, h: h as i32, content, scale, color, img: image, font
         }
     }
 
@@ -332,6 +382,29 @@ fn clipper(ix: i32, iy: i32, iw: i32, ih: i32, fw: u32, fh: u32) -> Option<(u32,
 
 
 }
+impl Draw for Text {
+    fn draw(&self, fb: &mut FB){
+        match self.clipped(fb) {
+            Some((x, y, w, h)) => {
+                    fb.render_image(&self.img, x, y, w, h, 0, 0)
+                },
+            None => ()
+        }
+    }
+    fn slide(&mut self, x: i32, y: i32) {
+        //move x
+        self.x = self.x + x;
+
+        //move y
+        self.y = self.y + y;
+    }
+
+    fn clipped(&self, fb: &FB) -> Option<(u32, u32, u32, u32)>{
+       clipper(self.x, self.y, self.w, self.h, fb.w, fb.h) 
+    }
+
+}
+
 
 /* old image code
     pub fn pan_image(&mut self, x: i32, y: i32){

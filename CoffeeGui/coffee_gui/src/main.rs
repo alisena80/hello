@@ -11,9 +11,7 @@ use joy_pad::Action;
 
 mod fb;
 mod canvas;
-use canvas::Canvas;
-use canvas::Layer;
-use canvas::Rect;
+use canvas::{ Canvas, Layer, Rect, Text};
 use fb::Color;
 
 use rand::Rng;
@@ -62,7 +60,18 @@ fn main()  -> Result<(), Box<dyn Error>> {
     Layer::new(
         Box::new(
             Rect::new(
-                0,0,40,40, true, Color::new_rgba(255,255,0, 180)
+                0,0,400,40, true, Color::new_rgba(255,255,0, 180)
+            ),
+        ),
+        true,
+        "box"
+    )
+  );
+  canvas.layers.push(
+    Layer::new(
+        Box::new(
+            Text::new(
+                0, 0, 14.0, "Hello World!", "./assets/fonts/Antic_Slab/AnticSlab-Regular.ttf", Color::new(255,255,255), 5
             ),
         ),
         true,
