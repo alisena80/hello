@@ -347,47 +347,49 @@ impl Text {
 
 // generic clipper to be called by draw's clipped
 fn clipper(ix: i32, iy: i32, iw: i32, ih: i32, fw: u32, fh: u32) -> Option<(u32, u32, u32, u32)>{
-        let x: u32;
-        let y: u32;
-        let mut w: u32;
-        let mut h: u32;
+        let x: i32;
+        let y: i32;
+        let mut w: i32;
+        let mut h: i32;
 
         // determine how much if any of the object is on screen
         // x negative direction
 
         if ix < 0 {
             x = 0;
-            w = (iw + ix) as u32;
-        } else if ix >= fw as i32 {  // x positive direction
+            w = iw + ix;
+        } else if ix >= fw as i32{  // x positive direction
             return None
         } else {
-            x = ix as u32;
-            w = iw as u32;            
+            x = ix;
+            w = iw;            
         }
         // width greater than display
-        if x + w > fw {
-            w = fw - x;
+        if x + w > fw as i32 {
+            w = fw as i32 - x;
         } 
 
         // y negative direction
         if iy < 0 {
             y = 0;
-            h = (ih + iy) as u32;
+            h = ih + iy;
         } else if iy >= fh as i32 {  // y positive direction
             return None
         } else {
-            y = iy as u32;
-            h = ih as u32;            
+            y = iy;
+            h = ih;            
         }
         // width greater than display
-        if y + h > fh {
-            h = fh - y;
+        if y + h > fh as i32 {
+            h = fh as i32 - y;
         }
-
-        if w < 1 || h < 1 {
+        // w and h must be more than 0 in order to render anything
+        // x and y cannot be less than zero coming out of the clipper - if so then likely say int overflow
+        if w < 1 || h < 1 || x < 0 || y < 0 {
             return None;
         }
-        Some((x, y, w, h))
+        
+        Some((x as u32, y as u32, w as u32, h as u32))
 
 
 }
