@@ -16,25 +16,24 @@ impl Color {
     }
 
     pub fn to_16b(&self) -> u16 {
-        let r: u8 = (((31000 * self.r as u32) / 255 as u32) / 1000) as u8;
-        let g: u8 = (((63000 * self.g as u32) / 255 as u32) / 1000) as u8;
-        let b: u8 = (((31000 * self.b as u32) / 255 as u32) / 1000) as u8; 
+        let r = u8_to_5b(self.r);
+        let g = u8_to_6b(self.g);
+        let b = u8_to_5b(self.b);
         let rgb565: u16 = ((r as u16) << 11) + ((g as u16) << 5) + b as u16;
         rgb565
     }
     pub fn from_16b(color: u16) -> Color{
-        // |-----|---\---|-----|
-        // |--|------\|-----|000|
+        // |-----|---\---|-----| --- rbg 565 sliced on byte
+        // |--|------\|-----|000| --- shift left and cut to lower byte then shift right again
         let b5: u8 = ((color << 3) as u8) >> 3;
-        // |000-----\|------|--|
+        // |000-----\|------|--|  -- shift right 3 to allign, cut, then shift right 2
         let g6: u8 = ((color >> 3) as u8) >> 2;
-        // |00000000\|-----|---|
+        // |00000000\|-----|---| -- sifhr right 8 to align, cut, then shift right 3
         let r5: u8 = ((color >> 8) as u8) >> 3;
         
-
-        let r = ((r5 as u32 * (255000) / 31) / 1000 ) as u8;
-        let g = ((g6 as u32 * (255000) / 63) / 1000 ) as u8;
-        let b = ((b5 as u32 * (255000) / 31) / 1000 ) as u8;
+        let r = x_to_8b(r5, 31);
+        let g = x_to_8b(g6, 63);
+        let b = x_to_8b(b5, 31);
         Color::new(r,g,b)
     }
     pub fn add(&self, color: &Color) -> Color {
@@ -43,14 +42,16 @@ impl Color {
             return Color::new(color.r, color.g, color.b)
         }
         
-        let r = or_255((((self.r as i32 * 1000) * ((1000 -  ((color.a as i32 * 1000) / 255)) / 1000) + (color.r as i32 * ((color.a as i32 * 1000) / 255))) / 1000) as u16);   
-        let g = or_255((((self.g as i32 * 1000) * ((1000 -  ((color.a as i32 * 1000) / 255)) / 1000) + (color.g as i32 * ((color.a as i32 * 1000) / 255))) / 1000) as u16);  
-        let b = or_255((((self.b as i32 * 1000) * ((1000 -  ((color.a as i32 * 1000) / 255)) / 1000) + (color.b as i32 * ((color.a as i32 * 1000) / 255))) / 1000) as u16);
+        let r = add_c(self.r, color.r, color.a);
+        let g = add_c(self.g, color.g, color.a);
+        let b = add_c(self.b, color.b, color.a);
 
         Color::new_rgba(r, g, b, self.a)
     }
 
 }
+
+// helper functions
 fn or_255(sp: u16) -> u8 {
     if sp > 255 {
         255
@@ -58,6 +59,22 @@ fn or_255(sp: u16) -> u8 {
         sp as u8
     }
 }
+fn u8_to_6b(c: u8) -> u8 {
+    (63.0 * c as f32 / 255.0) as u8
+}
+fn u8_to_5b(c: u8) -> u8 {
+    (31.0 * c as f32 / 255.0) as u8
+}
+fn x_to_8b(c: u8, factor: u8) -> u8 {
+    (c as f32 * 255.0 / factor as f32) as u8
+}
+
+fn add_c(base: u8, addition: u8, alpha: u8) -> u8 {
+    let alpha_p = alpha as f32 / 255.0;
+    let c = ((base as f32 * (1.0 - alpha_p)) + (addition as f32 * alpha_p)) as u16;
+    or_255(c)
+}      
+
 pub struct FB {
     fb: Framebuffer,
     pub w: u32,
