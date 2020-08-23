@@ -225,10 +225,10 @@ impl FB {
         let w = self.check_h(start_x, w1);
         let h = self.check_h(start_y, h1);
         
-        for x in start_x..(w - 1) {
-            for y in start_y..(h -1) {
+        for x in 0..(w - 1) {
+            for y in 0..(h - 1) {
                 let px = img.get_pixel(img_x + x, img_y + y);
-                let index = self.find_point(x,y);
+                let index = self.find_point(x + start_x, y + start_y );
                 let color = Color::new_rgba(px[0], px[1], px[2], px[3]);
                 if color.a == 255 {
                     let rgb565 = color.to_16b();
