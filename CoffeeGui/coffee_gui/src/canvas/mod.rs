@@ -1,8 +1,10 @@
 #[allow(dead_code)]
 use super::fb::FB;
 use super::fb::Color;
-use image::{DynamicImage};
-
+use image::{DynamicImage, Rgba}; // rgba is used internally by rusttype and image
+use rusttype::{point, Font, Scale};
+use std::fs::File;
+use std::io::Read;
 
 // Layer
 pub struct Layer<T> {
@@ -215,6 +217,7 @@ pub struct Image {
     w: i32,
     h: i32, 
     // where we sample from the image
+    // for now we assume a 1:1 pixal sample
     img_x: u32,
     img_y: u32
 }
@@ -252,6 +255,41 @@ impl Draw for Image {
     }
 
 }
+
+struct Text {
+    x: i32,
+    y: i32,
+    w: i32,
+    h: i32, 
+    content: &'static str,
+    font: Font<'static>,
+    scale: Scale,
+    color: Color,
+    img: DynamicImage // we store the actual rasterized text here and enough to rerasterize later
+}
+
+impl Text {
+    pub fn new(x: i32, y: i32, w: i32, h: i32, size: f32, content: &'static str, font: &'static str, color: Color) -> Text {
+        let mut file = File::open(font).expect("Font File Not Found");
+        let mut font_data: Vec<u8> = vec![];
+        file.read_to_end(&mut font_data).expect("Unable to Read Font File");
+
+        let font = Font::try_from_vec(font_data).expect("Error constructing Font");
+        let scale = Scale::uniform(size);
+        // Rgba 
+        let colour = (color.r, color.g, color.b, color.a);
+
+        // build the img
+        let mut img: DynamicImage;
+        Text {
+            x, y, w, h, content, scale, color, img, font
+        }
+    }
+
+}
+
+
+
 // generic clipper to be called by draw's clipped
 fn clipper(ix: i32, iy: i32, iw: i32, ih: i32, fw: u32, fh: u32) -> Option<(u32, u32, u32, u32)>{
         let x: u32;

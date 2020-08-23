@@ -20,7 +20,7 @@ use rand::Rng;
 
 extern crate framebuffer;
 extern crate image;
-
+extern crate rusttype;
 
 fn main()  -> Result<(), Box<dyn Error>> { 
   let button_initializers = vec![
