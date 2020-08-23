@@ -37,7 +37,9 @@ impl Canvas {
     pub fn render(&mut self) {
         self.screen.clear();
         for layer in &self.layers {
-            layer.item.draw(&mut self.screen);
+            if layer.active{
+                layer.item.draw(&mut self.screen);
+            }
         }
         self.screen.flush();
 
@@ -55,12 +57,32 @@ impl Canvas {
             }
         }
     }
+
+    #[allow(dead_code)] 
+    pub fn activate_layer_group(&mut self, group: &'static str){
+        for layer in &mut self.layers {
+            if layer.group == group {
+                layer.active = true;
+            }
+        }
+    }
+
+    #[allow(dead_code)] 
+    pub fn deactivate_layer_group(&mut self, group: &'static str){
+        for layer in &mut self.layers {
+            if layer.group == group {
+                layer.active = false;
+            }
+        }
+    }
+
 }
 
 
 pub trait Draw {
     fn draw(&self, fb: &mut FB);
     fn slide(&mut self, x: i32, y: i32);
+    fn clipped(&self, fb: &FB) -> Option<(u32, u32, u32, u32)>;
 }
 
 
@@ -79,7 +101,7 @@ impl Rect {
         Rect {x ,y, w, h, filled, color}
     }
 
-    fn clipped(&self, fb: &mut FB) -> Option<(u32, u32, u32, u32)>{
+    fn clipped(&self, fb: &FB) -> Option<(u32, u32, u32, u32)>{
         let x: u32;
         let y: u32;
         let mut w: u32;
@@ -129,6 +151,8 @@ impl Rect {
     }
 }
 
+
+
 impl Draw for Rect {
     fn draw(&self, fb: &mut FB){
         //clip actual coordinates to render what is on screen or do nothing
@@ -177,9 +201,10 @@ impl Draw for Rect {
         //move y
         self.y = self.y + y;
     }
-       
+    fn clipped(&self, fb: &FB) -> Option<(u32, u32, u32, u32)>{
+       clipper(self.x, self.y, self.w, self.h, fb.w, fb.h) 
+    }
 }
-
 
 // images
 pub struct Image {
@@ -203,45 +228,6 @@ impl Image {
         }
     }
 
-    fn clipped(&self, fb: &mut FB) -> Option<(u32, u32, u32, u32)>{
-        let x: u32;
-        let y: u32;
-        let mut w: u32;
-        let mut h: u32;
-
-        // determine how much if any of the object is on screen
-        // x negative direction
-
-        if self.x < 0 {
-            x = 0;
-            w = (self.w + self.x) as u32;
-        } else if self.x >= fb.w as i32 {  // x positive direction
-            return None
-        } else {
-            x = self.x as u32;
-            w = self.w as u32;            
-        }
-        // width greater than display
-        if x + w > fb.w {
-            w = fb.w - x;
-        } 
-
-        // y negative direction
-        if self.y < 0 {
-            y = 0;
-            h = (self.h + self.y) as u32;
-        } else if self.y >= fb.h as i32 {  // y positive direction
-            return None
-        } else {
-            y = self.y as u32;
-            h = self.h as u32;            
-        }
-        // width greater than display
-        if y + h > fb.h {
-            h = fb.h - y;
-        } 
-        Some((x, y, w, h))
-    }
 }
 
 impl Draw for Image {
@@ -260,6 +246,52 @@ impl Draw for Image {
         //move y
         self.y = self.y + y;
     }
+
+    fn clipped(&self, fb: &FB) -> Option<(u32, u32, u32, u32)>{
+       clipper(self.x, self.y, self.w, self.h, fb.w, fb.h) 
+    }
+
+}
+// generic clipper to be called by draw's clipped
+fn clipper(ix: i32, iy: i32, iw: i32, ih: i32, fw: u32, fh: u32) -> Option<(u32, u32, u32, u32)>{
+        let x: u32;
+        let y: u32;
+        let mut w: u32;
+        let mut h: u32;
+
+        // determine how much if any of the object is on screen
+        // x negative direction
+
+        if ix < 0 {
+            x = 0;
+            w = (iw + ix) as u32;
+        } else if ix >= fw as i32 {  // x positive direction
+            return None
+        } else {
+            x = ix as u32;
+            w = iw as u32;            
+        }
+        // width greater than display
+        if x + w > fw {
+            w = fw - x;
+        } 
+
+        // y negative direction
+        if iy < 0 {
+            y = 0;
+            h = (ih + iy) as u32;
+        } else if iy >= fh as i32 {  // y positive direction
+            return None
+        } else {
+            y = iy as u32;
+            h = ih as u32;            
+        }
+        // width greater than display
+        if y + h > fh {
+            h = fh - y;
+        } 
+        Some((x, y, w, h))
+
 
 }
 
