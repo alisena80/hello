@@ -283,7 +283,7 @@ impl Text {
 
         // layout the glyphs in a line with 20 pixels padding
         let glyphs: Vec<_> = font
-            .layout(content, scale, point(20.0, 20.0 + v_metrics.ascent))
+            .layout(content, scale, point(0.0, 0.0 + v_metrics.ascent))
             .collect();
 
         // work out the layout size
