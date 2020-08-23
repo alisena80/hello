@@ -1,7 +1,7 @@
 #[allow(dead_code)]
 use super::fb::FB;
 use super::fb::Color;
-use image::{DynamicImage, Rgba, RgbaImage}; // rgba is used internally by rusttype and image
+use image::{DynamicImage, Rgba }; // rgba is used internally by rusttype and image
 use rusttype::{point, Font, Scale};
 use std::fs::File;
 use std::io::Read;
@@ -391,7 +391,10 @@ impl Draw for Text {
     fn draw(&self, fb: &mut FB){
         match self.clipped(fb) {
             Some((x, y, w, h)) => {
-                    fb.render_image(&self.img, x, y, w, h, 0, 0)
+                    fb.render_image(&self.img, x, y, w, h, 
+                        adjust_img_loc(self.x, self.img_x, self.w as u32),
+                        adjust_img_loc(self.y, self.img_y, self.h as u32)
+                     )
                 },
             None => ()
         }
@@ -399,10 +402,10 @@ impl Draw for Text {
     fn slide(&mut self, x: i32, y: i32) {
         //move x
         self.x = self.x + x;
-        self.img_x = adjust_img_loc(self.x, self.img_x, self.w as u32);        
+//        self.img_x = adjust_img_loc(self.x, self.img_x, self.w as u32);        
         //move y
         self.y = self.y + y;
-        self.img_y = adjust_img_loc(self.y, self.img_y, self.h as u32);         
+//        self.img_y = adjust_img_loc(self.y, self.img_y, self.h as u32);         
     }
 
 
