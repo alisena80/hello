@@ -256,6 +256,7 @@ impl Draw for Image {
 
 }
 
+#[allow(dead_code)]
 pub struct Text {
     x: i32,
     y: i32,

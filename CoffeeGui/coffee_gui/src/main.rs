@@ -14,13 +14,46 @@ mod canvas;
 use canvas::{ Canvas, Layer, Rect, Text};
 use fb::Color;
 
+
+mod views;
+mod gui_tk;
+mod actions;
+
+use views::*;
+
+
+mod state;
+use state::{RootState, State, Mutator};
+
+use chrono::prelude::*;
+
 use rand::Rng;
 
 extern crate framebuffer;
 extern crate image;
 extern crate rusttype;
 
-fn main()  -> Result<(), Box<dyn Error>> { 
+fn main()  -> Result<(), Box<dyn Error>> {
+  // setup the root state object
+  let mut root_state = RootState::new(); 
+
+  // get a state mutation sender for time keeping thread
+  let time_mutator = root_state.getMutationSender();
+
+  // register a subscriber for state ojbects
+  let (root_view_sender, root_view_receiver) = mpsc::channel();
+  root_state.regStateSender(root_view_sender);
+
+  let mut root_view = RootView::new("/dev/fb1", root_view_receiver);
+
+  let settings_view = SettingsView::new();
+
+  root_view.addView(settings_view);
+
+  root_view.setActiveView(0);
+
+  run_view(root_view);
+
   let button_initializers = vec![
      ButtonInitializer {pin: 5, code: 0, key: "b"},
      ButtonInitializer {pin: 6, code: 1, key: "a"},
@@ -45,96 +78,25 @@ fn main()  -> Result<(), Box<dyn Error>> {
   });
 
 
-  // setup the canvas
-
   let controller_thread = thread::spawn(move || {
-  let mut rng = rand::thread_rng();
-  let mut canvas = Canvas::new("/dev/fb1");
-  canvas.clear();
-  // random other things
-  canvas.layers.push(Layer::new(Box::new(Rect::new(55, 150, 50, 40, true,Color::new(255,55,25)),), true, "float"   ));
-  canvas.layers.push(Layer::new(Box::new(Rect::new(90, 200, 60, 80, true,Color::new(255,25,255)),), true, "float"   ));
-  canvas.layers.push(Layer::new(Box::new(Rect::new(9, 50, 100, 40, true,Color::new(25,255,255)),), true, "float"   ));
-
-  canvas.layers.push(
-    Layer::new(
-        Box::new(
-            Rect::new(
-                0,0,400,40, true, Color::new_rgba(255,255,0, 180)
-            ),
-        ),
-        true,
-        "box"
-    )
-  );
-  canvas.layers.push(
-    Layer::new(
-        Box::new(
-            Text::new(
-                0, 0, 24.0, "Hello World!", "./assets/fonts/Antic_Slab/AnticSlab-Regular.ttf", Color::new(255,255,255), 5
-            ),
-        ),
-        true,
-        "box"
-    )
-  );
-  canvas.layers.push(
-    Layer::new(
-        Box::new(
-            Rect::new(
-                20,20,40,40, false, Color::new(255,0,0)
-            ),
-        ),
-        true,
-        "box"
-    )
-
-  );
-
-  loop {
-    
-    match input_rx.try_recv() {
-        Ok(button_actions) => {
-            for ba in &button_actions { 
-                match ba.action {
-                    Action::Pressed => {
-                        match ba.code {
-                            2 => canvas.slide_layer_group("box", -1, 0),
-                            3 => canvas.slide_layer_group("box", 1, 0),
-                            4 => canvas.slide_layer_group("box", 0, -1),
-                            5 => canvas.slide_layer_group("box", 0, 1),
-                            _ => ()
-                        };
-                        
-                    },
-                    Action::Repeated => {
-                        match ba.code {
-                            2 => canvas.slide_layer_group("box", -10, 0),
-                            3 => canvas.slide_layer_group("box", 10, 0),
-                            4 => canvas.slide_layer_group("box", 0, -10),
-                            5 => canvas.slide_layer_group("box", 0, 10),
-                            _ => ()
-                        };
-
-
-                    
-                    },
-                    Action::Released => {
+    loop {
+        
+        match input_rx.try_recv() {
+            Ok(button_actions) => {
+                for ba in &button_actions { 
+                    match ba.action {
+                        Action::Pressed => {},
+                        Action::Repeated => {},
+                        Action::Released => {}
                     }
                 }
-            }
-            joy_pad::helpers::ba_to_console(button_actions, &button_initializers);
-        },
-        Err(_) => ()
+                joy_pad::helpers::ba_to_console(button_actions, &button_initializers);
+            },
+            Err(_) => ()
+        }
+        thread::sleep(Duration::from_millis(5));
+
     }
-    let float_x: i32  = rng.gen_range(-1, 2);
-    let float_y: i32  = rng.gen_range(-1, 2);
-    canvas.slide_layer_group("float", float_x, float_y);
-
-    canvas.render();
-    thread::sleep(Duration::from_millis(5));
-
-  };
 
   
 
