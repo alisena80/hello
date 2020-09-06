@@ -14,7 +14,9 @@ pub fn run_view(mut root_view: RootView){
                     root_view.render();
                     println!("State Update");
                 },
-                Err(_) => ()
+                Err(x) => (
+                    println!("Error: {}", x)
+                )
             }
         }
     });
