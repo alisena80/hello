@@ -115,7 +115,7 @@ struct InfoBar {
 impl InfoBar {
     pub fn new(root_state: &mut RootState) -> InfoBar {
         let mut objects: Vec<Box<dyn Gui + Send>> = vec![];
-        let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 0, 100, 24, GuiAction::new("Time Click", None)));
+        let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 0, 130, 28, GuiAction::new("Time Click", None)));
         root_state.state.views.bar.push(button.gui_state.clone());
         objects.push(button);
 
@@ -195,7 +195,7 @@ impl View for SettingsView {
 impl SettingsView {
     pub fn new(root_state: &mut RootState) -> SettingsView {
         let mut objects: Vec<Box<dyn Gui + Send>> = vec![];
-        let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 30, 100, 32, GuiAction::new("Time Click", None)));
+        let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 28, 200, 32, GuiAction::new("Time Click", None)));
         root_state.state.views.settings.push(button.gui_state.clone());
         objects.push(button);
 
