@@ -11,6 +11,8 @@ pub fn run_view(mut root_view: RootView){
                 Ok(state) => {
                     root_view.updateBar(state.clone());
                     root_view.updateActiveView(state.clone());
+                    root_view.render();
+                    println!("State Update");
                 },
                 Err(_) => ()
             }
@@ -37,6 +39,10 @@ impl RootView {
             active: 0,
             state_receiver
         }
+    }
+    // draw it out
+    pub fn render(&mut self) {
+        self.canvas.render();
     }
 
     // update the top bar
