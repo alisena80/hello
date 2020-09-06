@@ -271,10 +271,10 @@ impl Draw for Image {
 
 #[allow(dead_code)]
 pub struct Text {
-    x: i32,
-    y: i32,
-    w: i32,
-    h: i32, 
+    pub x: i32,
+    pub y: i32,
+    pub w: i32,
+    pub h: i32, 
     content: String,
     font: Font<'static>,
     scale: Scale,
@@ -353,10 +353,6 @@ impl Text {
         Text {
             x, y, w: w as i32, h: h as i32, content, scale, color, img: image, font, img_x, img_y
         }
-    }
-    pub fn reRasterize(&mut self){
-         
-
     }
 }
 

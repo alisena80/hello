@@ -2,7 +2,7 @@ use uuid::Uuid;
 
 use super::canvas::{Rect, Layer, Draw, Canvas, Text};
 use super::fb::Color;
-use super::state::State;
+//use super::state::State;
 
 #[derive(Clone, Debug)]
 pub enum GuiState{
@@ -48,20 +48,6 @@ pub trait Gui {
 */
 //    fn draw(&self, canvas: &mut Canvas) -> bool;
 
-    fn select(&mut self, canvas: &mut Canvas) {}    
-
-    fn deselect(&mut self, canvas: &mut Canvas) {}    
-
-    fn click(&mut self, canvas: &mut Canvas) {}    
-
-    fn lock(&mut self, canvas: &mut Canvas) {}    
-
-    fn unlock(&mut self, canvas: &mut Canvas) {}    
-
-    fn show(&mut self, canvas: &mut Canvas) {}    
-
-    fn hide(&mut self, canvas: &mut Canvas) {}    
-
     // move the layers over to the canvas
     fn initialize(&mut self, canvas: &mut Canvas) -> bool {
         true
@@ -76,10 +62,10 @@ pub trait Gui {
         true
     }
 
-    fn setText(&mut self,  text: String, canvas: &mut Canvas){
+    fn set_text(&mut self,  text: String, canvas: &mut Canvas){
         ()
     }
-    fn setGuiState(&mut self, gui_state: GuiState, canvas: &mut Canvas){
+    fn set_gui_state(&mut self, gui_state: GuiState, canvas: &mut Canvas){
         ()
     }
 
@@ -115,7 +101,7 @@ impl Button {
         let gui_state =  GuiState::Base;
 
 
-        let mut layers: Vec<Layer<Box<dyn Draw + Send>>> = vec![];
+        let layers: Vec<Layer<Box<dyn Draw + Send>>> = vec![];
         let mut button = Button {
             text,
             action,
@@ -148,17 +134,22 @@ impl Button {
     pub fn gen_layers(&mut self)  {
         let palette = Palette::new();
         // basic background box
-        self.layers.push(
-             Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h, true, palette.background.clone())), true, self.regular_name.clone())
-        );
-        // basic outline box
-        self.layers.push(
-             Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h, false, palette.base.clone())), true, self.regular_name.clone())
-        );
-        //basic text
-        self.layers.push(
-             Layer::new(Box::new(Text::new(self.x, self.y, self.h as f32, self.text.clone(), "./assets/fonts/Antic_Slab/AnticSlab-Regular.ttf",  palette.base_text.clone(), 2),), true, self.regular_name.clone())
-        );
+        let bg: Layer<Box<dyn Draw + Send>> = Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h, true, palette.background.clone())), true, self.regular_name.clone());
+        let outline: Layer<Box<dyn Draw + Send>> = Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h, false, palette.base.clone())), true, self.regular_name.clone());
+        let mut text: Box<Text> = Box::new(Text::new(self.x, self.y, self.h as f32, self.text.clone(), "./assets/fonts/Antic_Slab/AnticSlab-Regular.ttf",  palette.base_text.clone(), 2),);
+        
+        let text_width = text.w;
+        if text_width < self.w {
+            let x_offset = self.w - text_width / 2;
+            text.x = self.x + x_offset;
+        }
+
+        let text_layer: Layer<Box<dyn Draw + Send>> = Layer::new(text, true, self.regular_name.clone()); 
+
+        self.layers.push(bg);
+        self.layers.push(outline);
+        self.layers.push(text_layer);
+
     }
 
 }
@@ -199,11 +190,11 @@ impl Gui for Button {
         true 
     }
 
-    fn setText(&mut self, text: String, canvas: &mut Canvas) {
+    fn set_text(&mut self, text: String, canvas: &mut Canvas) {
         self.text = text;
         self.reinit(canvas);
     }
-    fn setGuiState(&mut self, gui_state: GuiState, canvas: &mut Canvas){
+    fn set_gui_state(&mut self, gui_state: GuiState, canvas: &mut Canvas){
         self.gui_state = gui_state;
         self.activate(canvas);
     }

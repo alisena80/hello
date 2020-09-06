@@ -1,7 +1,7 @@
 use super::canvas::Canvas;
 use super::gui_tk::{Gui, Button, GuiAction};
-use super::state::{State, Mutator, RootState};
-use std::sync::mpsc::{Sender, Receiver, channel};
+use super::state::{State, RootState};
+use std::sync::mpsc::{ Receiver };
 use std::thread;
 
 pub fn run_view(mut root_view: RootView){
@@ -9,8 +9,8 @@ pub fn run_view(mut root_view: RootView){
         loop {
             match root_view.state_receiver.try_recv() {
                 Ok(state) => {
-                    root_view.updateBar(state.clone());
-                    root_view.updateActiveView(state.clone());
+                    root_view.update_bar(state.clone());
+                    root_view.update_active_view(state.clone());
                     root_view.render();
                     println!("State Update");
                 },
@@ -39,7 +39,7 @@ impl RootView {
             active: 0,
             state_receiver
         };
-        root_view.activateBar();
+        root_view.activate_bar();
         root_view
     }
     // draw it out
@@ -48,20 +48,20 @@ impl RootView {
     }
 
     // update the top bar
-    pub fn updateBar(&mut self, state: State) -> bool {
+    pub fn update_bar(&mut self, state: State) -> bool {
         self.bar.update(state, &mut self.canvas)
     }
 
-    pub fn activateBar(&mut self) -> bool {
+    pub fn activate_bar(&mut self) -> bool {
         self.bar.activate(&mut self.canvas)
     }
 
     // this is a move operation
-    pub fn addView<T: 'static >(&mut self, view: T) where T: View + Send {
+    pub fn add_view<T: 'static >(&mut self, view: T) where T: View + Send {
         self.views.push(Box::new(view));
     }
 
-    pub fn updateActiveView(&mut self, state: State){
+    pub fn update_active_view(&mut self, state: State){
         if self.views.len() > self.active {
             self.views[self.active].update(state, &mut self.canvas);
         } else {
@@ -71,7 +71,7 @@ impl RootView {
     }
 
     // for user input routing
-    pub fn setActiveView(&mut self, view: usize) {
+    pub fn set_active_view(&mut self, view: usize) {
         if self.views.len() <= view {
             panic!("Cannot activate a view which does not exist");
         }
@@ -115,7 +115,7 @@ struct InfoBar {
 impl InfoBar {
     pub fn new(root_state: &mut RootState) -> InfoBar {
         let mut objects: Vec<Box<dyn Gui + Send>> = vec![];
-        let button: Box<Button> = Box::new(Button::new("00:00".to_string(), 0, 0, 100, 24, GuiAction::new("Time Click", None)));
+        let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 0, 100, 24, GuiAction::new("Time Click", None)));
         root_state.state.views.bar.push(button.gui_state.clone());
         objects.push(button);
 
@@ -136,8 +136,8 @@ impl InfoBar {
     }
     pub fn update(&mut self, state: State, canvas: &mut Canvas) -> bool{
         //update each object in the view with the correct state data
-        self.objects[0].setText(state.time.current_time.clone(), canvas);
-        self.objects[0].setGuiState(state.views.bar[0].clone(), canvas);
+        self.objects[0].set_text(state.time.current_time.clone(), canvas);
+        self.objects[0].set_gui_state(state.views.bar[0].clone(), canvas);
         true
     }
 }
@@ -177,8 +177,8 @@ impl View for SettingsView {
     }
     fn update(&mut self, state: State, canvas: &mut Canvas) -> bool {
         //update each object in the view with the correct state data
-        self.objects[0].setText(state.time.current_time.clone(), canvas);
-        self.objects[0].setGuiState(state.views.settings[0].clone(), canvas);
+        self.objects[0].set_text(state.time.current_time.clone(), canvas);
+        self.objects[0].set_gui_state(state.views.settings[0].clone(), canvas);
         true 
     }
     fn deactivate(&mut self, canvas: &mut Canvas) -> bool {
@@ -195,7 +195,7 @@ impl View for SettingsView {
 impl SettingsView {
     pub fn new(root_state: &mut RootState) -> SettingsView {
         let mut objects: Vec<Box<dyn Gui + Send>> = vec![];
-        let button: Box<Button> = Box::new(Button::new("00:00".to_string(), 0, 30, 100, 32, GuiAction::new("Time Click", None)));
+        let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 30, 100, 32, GuiAction::new("Time Click", None)));
         root_state.state.views.settings.push(button.gui_state.clone());
         objects.push(button);
 

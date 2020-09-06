@@ -11,8 +11,6 @@ use joy_pad::Action;
 
 mod fb;
 mod canvas;
-use canvas::{ Canvas, Layer, Rect, Text};
-use fb::Color;
 
 
 mod views;
@@ -23,11 +21,9 @@ use views::*;
 
 
 mod state;
-use state::{RootState, State, Mutator, time_keeper, runState};
+use state::{RootState,  time_keeper, run_state};
 
-use chrono::prelude::*;
 
-use rand::Rng;
 
 extern crate framebuffer;
 extern crate image;
@@ -39,24 +35,24 @@ fn main()  -> Result<(), Box<dyn Error>> {
 
   // get a state mutation sender for time keeping thread
   // we setup a time keeper thread on a 1 second resolution to trigger initial state senders
-  let time_mutator = root_state.getMutationSender();
+  let time_mutator = root_state.get_mutation_sender();
   time_keeper(time_mutator);
 
   // register a subscriber for state ojbects
   let (root_view_sender, root_view_receiver) = mpsc::channel();
-  root_state.regStateSender(root_view_sender);
+  root_state.reg_state_sender(root_view_sender);
 
   let mut root_view = RootView::new("/dev/fb1", root_view_receiver, &mut root_state);
 
   let settings_view = SettingsView::new(&mut root_state);
 
-  root_view.addView(settings_view);
+  root_view.add_view(settings_view);
 
-  root_view.setActiveView(0);
+  root_view.set_active_view(0);
 
   run_view(root_view);
 
-  runState( root_state);
+  run_state(root_state);
 
   let button_initializers = vec![
      ButtonInitializer {pin: 5, code: 0, key: "b"},

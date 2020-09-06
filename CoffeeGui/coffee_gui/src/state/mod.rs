@@ -1,16 +1,15 @@
 use std::sync::mpsc::{Sender, Receiver, channel};
 use std::thread;
-use std::thread::JoinHandle;
 
-use std::time::{Instant, SystemTime, Duration};
+use std::time::{Instant,  Duration};
 
-use chrono::format::strftime;
+//use chrono::format::strftime;
 use chrono::DateTime;
 use chrono::Local;
 
 use super::gui_tk::GuiState;
 
-pub fn runState(mut root_state:  RootState) {
+pub fn run_state(mut root_state:  RootState) {
         thread::spawn(move || {
             loop {
 
@@ -100,7 +99,7 @@ impl RootState {
                 },
                 time: TimeState {
                     turned_on: Instant::now(),
-                    current_time: "00:00".to_string() 
+                    current_time: "00:00:00 XX".to_string() 
                 },
                 settings: SettingsState {
                     running: false,
@@ -122,12 +121,12 @@ impl RootState {
         }
     }
 
-    pub fn regStateSender(&mut self, sender: Sender<State>) { 
+    pub fn reg_state_sender(&mut self, sender: Sender<State>) { 
         self.state_senders.push(sender);
     }
 
 
-    pub fn getMutationSender(&self) -> Sender<Mutator> {
+    pub fn get_mutation_sender(&self) -> Sender<Mutator> {
         self.mutation_sender.clone()
     }
 
@@ -150,11 +149,11 @@ pub struct Mutator {
 
 fn get_current_time() -> String {
     let local: DateTime<Local> = Local::now();
-    local.format("%H:%M").to_string()
+    local.format("r").to_string()
 }
 
 pub fn time_keeper(mutation_sender: Sender<Mutator>) {
-    let join_handle = thread::spawn( move|| {
+    thread::spawn( move|| {
         loop {
             mutation_sender.send(
                 Mutator{
