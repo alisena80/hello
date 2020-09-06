@@ -23,7 +23,7 @@ use views::*;
 
 
 mod state;
-use state::{RootState, State, Mutator, time_keeper};
+use state::{RootState, State, Mutator, time_keeper, runState};
 
 use chrono::prelude::*;
 
@@ -56,7 +56,7 @@ fn main()  -> Result<(), Box<dyn Error>> {
 
   run_view(root_view);
 
-  RootState::runState(&mut root_state);
+  runState( root_state);
 
   let button_initializers = vec![
      ButtonInitializer {pin: 5, code: 0, key: "b"},

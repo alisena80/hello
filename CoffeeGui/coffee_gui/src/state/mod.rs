@@ -10,6 +10,32 @@ use chrono::Local;
 
 use super::gui_tk::GuiState;
 
+pub fn runState(mut root_state:  RootState) {
+        thread::spawn(move || {
+            loop {
+
+                // lisen for mutators
+                let mutator: Mutator = match root_state.mutation_receiver.try_recv() {
+                    Ok(mutator) => mutator,
+                    Err(_) => Mutator {name: "", value: "".to_string()}
+
+                };
+                         // process mutation
+                        root_state.mutate(mutator);
+                        println!("Got Mutator");
+                        // send state clone
+                        for sender in &root_state.state_senders {
+                            sender.send(root_state.state.clone()).unwrap();
+                        }
+
+   
+            }
+        });
+
+}
+
+
+
 pub struct RootState {
     pub state: State,
     pub state_senders: Vec<Sender<State>>,
@@ -103,33 +129,6 @@ impl RootState {
         self.mutation_sender.clone()
     }
 
-
-    pub fn runState(root_state: &'static mut RootState) {
-        thread::spawn(move || {
-            loop {
-
-                // lisen for mutators
-                match root_state.mutation_receiver.try_recv() {
-                    Ok(mutator) => {
-                        // process mutation
-                        root_state.mutate(mutator);
-                        println!("Got Mutator");
-                        // send state clone
-                        for sender in &root_state.state_senders {
-                            sender.send(root_state.state.clone()).unwrap();
-                        }
-
-
-                    },
-                    Err(_) => (
-                    )
-
-                }
-    
-            }
-        });
-
-    }
 
     pub fn mutate(&mut self, mutator: Mutator) {
         match mutator.name {
