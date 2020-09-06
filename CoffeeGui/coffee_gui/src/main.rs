@@ -56,6 +56,8 @@ fn main()  -> Result<(), Box<dyn Error>> {
 
   run_view(root_view);
 
+  RootState::runState(&mut root_state);
+
   let button_initializers = vec![
      ButtonInitializer {pin: 5, code: 0, key: "b"},
      ButtonInitializer {pin: 6, code: 1, key: "a"},

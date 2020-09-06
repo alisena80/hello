@@ -12,8 +12,8 @@ use super::gui_tk::GuiState;
 
 pub struct RootState {
     pub state: State,
-    state_senders: Vec<Sender<State>>,
-    mutation_receiver: Receiver<Mutator>,
+    pub state_senders: Vec<Sender<State>>,
+    pub mutation_receiver: Receiver<Mutator>,
     mutation_sender: Sender<Mutator>   
 }
 
@@ -104,24 +104,25 @@ impl RootState {
     }
 
 
-    pub fn runState(&'static mut self) {
+    pub fn runState(root_state: &'static mut RootState) {
         thread::spawn(move || {
             loop {
 
                 // lisen for mutators
-                match self.mutation_receiver.try_recv() {
+                match root_state.mutation_receiver.try_recv() {
                     Ok(mutator) => {
                         // process mutation
-                        self.mutate(mutator);
-
+                        root_state.mutate(mutator);
+                        println!("Got Mutator");
                         // send state clone
-                        for sender in &self.state_senders {
-                            sender.send(self.state.clone());
+                        for sender in &root_state.state_senders {
+                            sender.send(root_state.state.clone()).unwrap();
                         }
 
 
                     },
-                    Err(_) => ()
+                    Err(_) => (
+                    )
 
                 }
     
@@ -133,6 +134,7 @@ impl RootState {
     pub fn mutate(&mut self, mutator: Mutator) {
         match mutator.name {
             "[time.current_time]" => {
+                println!("Matched Mutator");
                 self.state.time.current_time = mutator.value;
             },
             _ => ()
@@ -158,9 +160,10 @@ pub fn time_keeper(mutation_sender: Sender<Mutator>) {
                     name: "[time.current_time]",
                     value: get_current_time()
                 }
-            );
+            ).unwrap();
+            println!("Tick");
             thread::sleep(Duration::from_millis(1000));        
-        }
+        };
 
     });
 }
