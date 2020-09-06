@@ -149,7 +149,7 @@ pub struct Mutator {
 
 fn get_current_time() -> String {
     let local: DateTime<Local> = Local::now();
-    local.format("r").to_string()
+    local.format("%r").to_string()
 }
 
 pub fn time_keeper(mutation_sender: Sender<Mutator>) {

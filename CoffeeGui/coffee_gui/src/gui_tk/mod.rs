@@ -140,7 +140,7 @@ impl Button {
         
         let text_width = text.w;
         if text_width < self.w {
-            let x_offset = self.w - text_width / 2;
+            let x_offset = (self.w - text_width) / 2;
             text.x = self.x + x_offset;
         }
 
