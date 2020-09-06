@@ -20,14 +20,16 @@ pub fn runState(mut root_state:  RootState) {
                     Err(_) => Mutator {name: "", value: "".to_string()}
 
                 };
-                         // process mutation
+                // process mutation
+                if mutator.name != "".to_string() {
+
                         root_state.mutate(mutator);
                         println!("Got Mutator");
                         // send state clone
                         for sender in &root_state.state_senders {
                             sender.send(root_state.state.clone()).unwrap();
                         }
-
+                }
    
             }
         });

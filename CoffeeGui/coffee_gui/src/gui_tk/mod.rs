@@ -149,11 +149,11 @@ impl Button {
         let palette = Palette::new();
         // basic background box
         self.layers.push(
-             Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h - 4, true, palette.background.clone())), true, self.regular_name.clone())
+             Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h, true, palette.background.clone())), true, self.regular_name.clone())
         );
         // basic outline box
         self.layers.push(
-             Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h - 4, false, palette.base.clone())), true, self.regular_name.clone())
+             Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h, false, palette.base.clone())), true, self.regular_name.clone())
         );
         //basic text
         self.layers.push(

@@ -32,13 +32,15 @@ pub struct RootView {
 impl RootView {
     pub fn new(fbdev: &'static str, state_receiver: Receiver<State>, root_state: &mut RootState) -> RootView {
         let canvas: Canvas = Canvas::new(fbdev);
-        RootView {
+        let mut root_view = RootView {
             bar: InfoBar::new(root_state),
             views: vec![],
             canvas: canvas,
             active: 0,
             state_receiver
-        }
+        };
+        root_view.activateBar();
+        root_view
     }
     // draw it out
     pub fn render(&mut self) {
@@ -113,7 +115,7 @@ struct InfoBar {
 impl InfoBar {
     pub fn new(root_state: &mut RootState) -> InfoBar {
         let mut objects: Vec<Box<dyn Gui + Send>> = vec![];
-        let button: Box<Button> = Box::new(Button::new("00:00".to_string(), 0, 30, 100, 32, GuiAction::new("Time Click", None)));
+        let button: Box<Button> = Box::new(Button::new("00:00".to_string(), 0, 0, 100, 24, GuiAction::new("Time Click", None)));
         root_state.state.views.bar.push(button.gui_state.clone());
         objects.push(button);
 
@@ -125,7 +127,8 @@ impl InfoBar {
     // there is no deactivate
     pub fn activate(&mut self,  canvas: &mut Canvas) -> bool {
          for i in (0 as usize)..(self.objects.len() as usize) {
-            if !self.objects[i].initialize(canvas) || !self.objects[i].activate(canvas) {
+            if !(self.objects[i].initialize(canvas) && self.objects[i].activate(canvas)) {
+                println!("Could not get bar objects initialized and activated!");
                 return false;
             }
         }

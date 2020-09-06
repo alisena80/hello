@@ -81,10 +81,14 @@ impl Canvas {
     }
 
     pub fn drop_layer_group(&mut self, group: String){
+        let mut to_remove: Vec<usize> = vec![];
         for i in 0..self.layers.len() {
             if self.layers[i].group == group {
-                self.layers.remove(i);
+                to_remove.push(i);
             }
+        }
+        for i in to_remove.iter().rev() {
+            self.layers.remove(*i);
         }
     }
 }
