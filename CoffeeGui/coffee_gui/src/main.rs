@@ -23,7 +23,7 @@ use views::*;
 
 
 mod state;
-use state::{RootState, State, Mutator};
+use state::{RootState, State, Mutator, time_keeper};
 
 use chrono::prelude::*;
 
@@ -38,15 +38,17 @@ fn main()  -> Result<(), Box<dyn Error>> {
   let mut root_state = RootState::new(); 
 
   // get a state mutation sender for time keeping thread
+  // we setup a time keeper thread on a 1 second resolution to trigger initial state senders
   let time_mutator = root_state.getMutationSender();
+  time_keeper(time_mutator);
 
   // register a subscriber for state ojbects
   let (root_view_sender, root_view_receiver) = mpsc::channel();
   root_state.regStateSender(root_view_sender);
 
-  let mut root_view = RootView::new("/dev/fb1", root_view_receiver);
+  let mut root_view = RootView::new("/dev/fb1", root_view_receiver, &mut root_state);
 
-  let settings_view = SettingsView::new();
+  let settings_view = SettingsView::new(&mut root_state);
 
   root_view.addView(settings_view);
 

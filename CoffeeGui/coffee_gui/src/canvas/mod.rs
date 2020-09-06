@@ -7,15 +7,17 @@ use std::fs::File;
 use std::io::Read;
 
 // Layer
+
+#[derive(Clone, Debug)]
 pub struct Layer<T> {
     pub item: Box<T>,
     pub active: bool,
-    pub group: &'static str
+    pub group: String
 }
 
 
 impl<T> Layer<T> {
-    pub fn new(item: T, active: bool, group: &'static str) -> Layer<T>{
+    pub fn new(item: T, active: bool, group: String) -> Layer<T>{
         Layer{item: Box::new(item), active, group}
     }
 }
@@ -54,14 +56,14 @@ impl Canvas {
 
     pub fn slide_layer_group(&mut self, group: &'static str, x: i32, y: i32) {
         for layer in &mut self.layers {
-            if layer.group == group {
+            if &layer.group == group {
                 layer.item.slide(x, y);
             }
         }
     }
 
     #[allow(dead_code)] 
-    pub fn activate_layer_group(&mut self, group: &'static str){
+    pub fn activate_layer_group(&mut self, group: String){
         for layer in &mut self.layers {
             if layer.group == group {
                 layer.active = true;
@@ -70,7 +72,7 @@ impl Canvas {
     }
 
     #[allow(dead_code)] 
-    pub fn deactivate_layer_group(&mut self, group: &'static str){
+    pub fn deactivate_layer_group(&mut self, group: String){
         for layer in &mut self.layers {
             if layer.group == group {
                 layer.active = false;
@@ -78,8 +80,14 @@ impl Canvas {
         }
     }
 
+    pub fn drop_layer_group(&mut self, group: String){
+        for i in 0..self.layers.len() {
+            if self.layers[i].group == group {
+                self.layers.remove(i);
+            }
+        }
+    }
 }
-
 
 pub trait Draw {
     fn draw(&self, fb: &mut FB);
@@ -89,6 +97,7 @@ pub trait Draw {
 
 
 // Rectangles
+#[derive(Clone, Debug)]
 pub struct Rect {
     pub x: i32,
     pub y: i32,
@@ -262,7 +271,7 @@ pub struct Text {
     y: i32,
     w: i32,
     h: i32, 
-    content: &'static str,
+    content: String,
     font: Font<'static>,
     scale: Scale,
     color: Color,
@@ -273,7 +282,7 @@ pub struct Text {
 }
 
 impl Text {
-    pub fn new(x: i32, y: i32, size: f32, content: &'static str, font: &'static str, color: Color, padding: u32) -> Text {
+    pub fn new(x: i32, y: i32, size: f32, content: String, font: &'static str, color: Color, padding: u32) -> Text {
         let mut file = File::open(font).expect("Font File Not Found");
         let mut font_data: Vec<u8> = vec![];
         file.read_to_end(&mut font_data).expect("Unable to Read Font File");
@@ -284,10 +293,10 @@ impl Text {
         let colour = (color.r, color.g, color.b, color.a);
 
         let v_metrics = font.v_metrics(scale);
-
+        
         // layout the glyphs in a line with 20 pixels padding
         let glyphs: Vec<_> = font
-            .layout(content, scale, point(0.0, 0.0 + v_metrics.ascent))
+            .layout(&content, scale, point(0.0, 0.0 + v_metrics.ascent))
             .collect();
 
         // work out the layout size
@@ -341,7 +350,10 @@ impl Text {
             x, y, w: w as i32, h: h as i32, content, scale, color, img: image, font, img_x, img_y
         }
     }
+    pub fn reRasterize(&mut self){
+         
 
+    }
 }
 
 

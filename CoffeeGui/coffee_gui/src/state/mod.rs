@@ -1,5 +1,6 @@
 use std::sync::mpsc::{Sender, Receiver, channel};
 use std::thread;
+use std::thread::JoinHandle;
 
 use std::time::{Instant, SystemTime, Duration};
 
@@ -7,12 +8,13 @@ use chrono::format::strftime;
 use chrono::DateTime;
 use chrono::Local;
 
+use super::gui_tk::GuiState;
+
 pub struct RootState {
-    state: State,
+    pub state: State,
     state_senders: Vec<Sender<State>>,
     mutation_receiver: Receiver<Mutator>,
-    mutation_sender: Sender<Mutator>
-   
+    mutation_sender: Sender<Mutator>   
 }
 
 #[derive(Clone, Debug)]
@@ -21,6 +23,7 @@ pub struct State {
     pub tank: TankState,
     pub time: TimeState,
     pub settings: SettingsState,
+    pub views: ViewsState
 }
 
 #[derive(Clone, Debug)]
@@ -37,7 +40,7 @@ pub struct TankState {
 #[derive(Clone, Debug)]
 pub struct TimeState {
     pub turned_on:  Instant,
-    pub current_time: &'static str
+    pub current_time: String
 }
 
 #[derive(Clone, Debug)]
@@ -46,6 +49,13 @@ pub struct SettingsState {
     pub p: u32,
     pub i: u32,
     pub d: u32 
+}
+#[derive(Clone, Debug)]
+pub struct ViewsState {
+    pub bar: Vec<GuiState>,
+    pub boiler: Vec<GuiState>,
+    pub steamer: Vec<GuiState>,
+    pub settings: Vec<GuiState>
 }
 
 impl RootState {
@@ -62,7 +72,7 @@ impl RootState {
                 },
                 time: TimeState {
                     turned_on: Instant::now(),
-                    current_time: "00:00" 
+                    current_time: "00:00".to_string() 
                 },
                 settings: SettingsState {
                     running: false,
@@ -70,6 +80,12 @@ impl RootState {
                     i: 0,
                     d: 0
                 },
+                views: ViewsState{
+                    bar: vec![],
+                    boiler: vec![],
+                    steamer: vec![],
+                    settings: vec![]
+                }
             },
             state_senders: vec![],
             mutation_receiver: receiver,
@@ -126,7 +142,7 @@ impl RootState {
 
 pub struct Mutator {
     name: &'static str,
-    value: &'static str
+    value: String
 }
 
 fn get_current_time() -> String {
@@ -134,4 +150,17 @@ fn get_current_time() -> String {
     local.format("%H:%M").to_string()
 }
 
+pub fn time_keeper(mutation_sender: Sender<Mutator>) {
+    let join_handle = thread::spawn( move|| {
+        loop {
+            mutation_sender.send(
+                Mutator{
+                    name: "[time.current_time]",
+                    value: get_current_time()
+                }
+            );
+            thread::sleep(Duration::from_millis(1000));        
+        }
 
+    });
+}
