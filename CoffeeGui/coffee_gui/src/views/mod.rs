@@ -114,7 +114,7 @@ impl InfoBar {
     pub fn new(root_state: &mut RootState) -> InfoBar {
         let mut objects: Vec<Box<dyn Gui + Send>> = vec![];
         let button: Box<Button> = Box::new(Button::new("00:00".to_string(), 0, 30, 100, 32, GuiAction::new("Time Click", None)));
-        root_state.state.views.settings.push(button.gui_state.clone());
+        root_state.state.views.bar.push(button.gui_state.clone());
         objects.push(button);
 
         InfoBar {
@@ -175,7 +175,7 @@ impl View for SettingsView {
     fn update(&mut self, state: State, canvas: &mut Canvas) -> bool {
         //update each object in the view with the correct state data
         self.objects[0].setText(state.time.current_time.clone(), canvas);
-        self.objects[0].setGuiState(state.views.bar[0].clone(), canvas);
+        self.objects[0].setGuiState(state.views.settings[0].clone(), canvas);
         true 
     }
     fn deactivate(&mut self, canvas: &mut Canvas) -> bool {
