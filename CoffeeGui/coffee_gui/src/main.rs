@@ -6,7 +6,6 @@ use std::sync::mpsc;
 mod joy_pad;
 use joy_pad::Pad;
 use joy_pad::ButtonInitializer;
-use joy_pad::Action;
 
 
 mod fb;
@@ -17,9 +16,11 @@ mod views;
 mod gui_tk;
 mod actions;
 
+
+
 use views::*;
 
-
+use gui_tk::*;
 mod state;
 use state::{RootState,  time_keeper, run_state};
 
@@ -30,30 +31,7 @@ extern crate image;
 extern crate rusttype;
 
 fn main()  -> Result<(), Box<dyn Error>> {
-  // setup the root state object
-  let mut root_state = RootState::new(); 
-
-  // get a state mutation sender for time keeping thread
-  // we setup a time keeper thread on a 1 second resolution to trigger initial state senders
-  let time_mutator = root_state.get_mutation_sender();
-  time_keeper(time_mutator);
-
-  // register a subscriber for state ojbects
-  let (root_view_sender, root_view_receiver) = mpsc::channel();
-  root_state.reg_state_sender(root_view_sender);
-
-  let mut root_view = RootView::new("/dev/fb1", root_view_receiver, &mut root_state);
-
-  let settings_view = SettingsView::new(&mut root_state);
-
-  root_view.add_view(settings_view);
-
-  root_view.set_active_view(0);
-
-  run_view(root_view);
-
-  run_state(root_state);
-
+    // setup hw buttons
   let button_initializers = vec![
      ButtonInitializer {pin: 5, code: 0, key: "b"},
      ButtonInitializer {pin: 6, code: 1, key: "a"},
@@ -78,22 +56,38 @@ fn main()  -> Result<(), Box<dyn Error>> {
   });
 
 
+
+
+  // setup the root state object
+  let mut root_state = RootState::new(); 
+
+  // get a state mutation sender for time keeping thread
+  // we setup a time keeper thread on a 1 second resolution to trigger initial state senders
+  let time_mutator = root_state.get_mutation_sender();
+  time_keeper(time_mutator);
+
+  // register a subscriber for state ojbects
+  let (root_view_sender, root_view_receiver) = mpsc::channel();
+  root_state.reg_state_sender(root_view_sender);
+
+  let mut root_view = RootView::new("/dev/fb1", root_view_receiver, &mut root_state, input_rx);
+
+  let mut settings_view = SettingsView::new();
+    let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 28, 200, 32, GuiAction::new("Time Click", None))); 
+    settings_view.add_object(button, 0, 0, &mut root_state);
+  root_view.add_view(settings_view);
+
+  root_view.set_active_view(0);
+
+  run_view(root_view);
+
+  run_state(root_state);
+
+
+
   let controller_thread = thread::spawn(move || {
     loop {
         
-        match input_rx.try_recv() {
-            Ok(button_actions) => {
-                for ba in &button_actions { 
-                    match ba.action {
-                        Action::Pressed => {},
-                        Action::Repeated => {},
-                        Action::Released => {}
-                    }
-                }
-                joy_pad::helpers::ba_to_console(button_actions, &button_initializers);
-            },
-            Err(_) => ()
-        }
         thread::sleep(Duration::from_millis(5));
 
     }

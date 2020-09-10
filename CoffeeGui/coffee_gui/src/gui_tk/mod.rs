@@ -15,9 +15,16 @@ pub enum GuiState{
 struct Palette {
     base: Color,
     base_text: Color,
+    base_background: Color,
+
     selected: Color,
     selected_text: Color,
-    background: Color,
+    selected_background: Color,
+
+    clicked: Color,
+    clicked_text: Color,
+    clicked_background: Color,
+
 }
 
 impl Palette {
@@ -25,9 +32,15 @@ impl Palette {
         Palette {
             base: Color::new(78, 156, 183),
             base_text: Color::new(255, 255, 255),
+            base_background: Color::new(30, 50, 50),
+
             selected: Color::new(78, 156, 183),
-            selected_text: Color::new(0, 0, 0),
-            background: Color::new(30, 50, 50)
+            selected_text: Color::new(255, 255, 255),
+            selected_background: Color::new(60, 100, 100),
+
+            clicked: Color::new(160, 255, 255),
+            clicked_text: Color::new(0, 0, 0),
+            clicked_background: Color::new(120, 200, 200),
 
         }
     }
@@ -65,8 +78,12 @@ pub trait Gui {
     fn set_text(&mut self,  text: String, canvas: &mut Canvas){
         ()
     }
+
     fn set_gui_state(&mut self, gui_state: GuiState, canvas: &mut Canvas){
         ()
+    }
+    fn get_gui_state(&self) -> GuiState {
+        GuiState::Base
     }
 
 }
@@ -133,25 +150,52 @@ impl Button {
 
     pub fn gen_layers(&mut self)  {
         let palette = Palette::new();
+        
         // basic background box
-        let bg: Layer<Box<dyn Draw + Send>> = Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h, true, palette.background.clone())), true, self.regular_name.clone());
+        let bg: Layer<Box<dyn Draw + Send>> = Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h, true, palette.base_background.clone())), true, self.regular_name.clone());
         let outline: Layer<Box<dyn Draw + Send>> = Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h, false, palette.base.clone())), true, self.regular_name.clone());
         let mut text: Box<Text> = Box::new(Text::new(self.x, self.y, self.h as f32, self.text.clone(), "./assets/fonts/Antic_Slab/AnticSlab-Regular.ttf",  palette.base_text.clone(), 2),);
-        
         let text_width = text.w;
         if text_width < self.w {
             let x_offset = (self.w - text_width) / 2;
             text.x = self.x + x_offset;
         }
-
         let text_layer: Layer<Box<dyn Draw + Send>> = Layer::new(text, true, self.regular_name.clone()); 
 
         self.layers.push(bg);
         self.layers.push(outline);
         self.layers.push(text_layer);
 
-    }
+        // Clicked background box
+        let bg: Layer<Box<dyn Draw + Send>> = Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h, true, palette.clicked_background.clone())), false, self.clicked_name.clone());
+        let outline: Layer<Box<dyn Draw + Send>> = Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h, false, palette.clicked.clone())), false, self.clicked_name.clone());
+        let mut text: Box<Text> = Box::new(Text::new(self.x, self.y, self.h as f32, self.text.clone(), "./assets/fonts/Antic_Slab/AnticSlab-Regular.ttf",  palette.clicked_text.clone(), 2),);
+        let text_width = text.w;
+        if text_width < self.w {
+            let x_offset = (self.w - text_width) / 2;
+            text.x = self.x + x_offset;
+        }
+        let text_layer: Layer<Box<dyn Draw + Send>> = Layer::new(text, false, self.clicked_name.clone()); 
 
+        self.layers.push(bg);
+        self.layers.push(outline);
+        self.layers.push(text_layer);
+
+        // Selected background box
+        let bg: Layer<Box<dyn Draw + Send>> = Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h, true, palette.selected_background.clone())), false, self.selected_name.clone());
+        let outline: Layer<Box<dyn Draw + Send>> = Layer::new(Box::new(Rect::new(self.x, self.y, self.w, self.h, false, palette.selected.clone())), false, self.selected_name.clone());
+        let mut text: Box<Text> = Box::new(Text::new(self.x, self.y, self.h as f32, self.text.clone(), "./assets/fonts/Antic_Slab/AnticSlab-Regular.ttf",  palette.selected_text.clone(), 2),);
+        let text_width = text.w;
+        if text_width < self.w {
+            let x_offset = (self.w - text_width) / 2;
+            text.x = self.x + x_offset;
+        }
+        let text_layer: Layer<Box<dyn Draw + Send>> = Layer::new(text, false, self.selected_name.clone()); 
+
+        self.layers.push(bg);
+        self.layers.push(outline);
+        self.layers.push(text_layer);
+    }
 }
 impl Gui for Button {
     fn initialize(&mut self, canvas: &mut Canvas) -> bool {
@@ -178,7 +222,6 @@ impl Gui for Button {
                 canvas.activate_layer_group(self.selected_name.clone());
                 canvas.deactivate_layer_group(self.clicked_name.clone());
             }
-            
         };
         true
     }
@@ -194,9 +237,13 @@ impl Gui for Button {
         self.text = text;
         self.reinit(canvas);
     }
+
     fn set_gui_state(&mut self, gui_state: GuiState, canvas: &mut Canvas){
         self.gui_state = gui_state;
         self.activate(canvas);
+    }
+    fn get_gui_state(&self) -> GuiState {
+        self.gui_state.clone()
     }
 
 }

@@ -29,7 +29,7 @@ pub fn run_state(mut root_state:  RootState) {
                             sender.send(root_state.state.clone()).unwrap();
                         }
                 }
-   
+                thread::sleep(Duration::from_millis(5));
             }
         });
 
