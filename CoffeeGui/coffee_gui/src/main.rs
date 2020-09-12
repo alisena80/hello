@@ -83,7 +83,6 @@ fn main()  -> Result<(), Box<dyn Error>> {
     settings_view.add_object(button2, 0, 0, &mut root_state);
     settings_view.add_object(button3, 0, 2, &mut root_state);
 
-
   root_view.add_view(settings_view);
 
   root_view.set_active_view(0);

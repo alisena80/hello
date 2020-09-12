@@ -22,6 +22,7 @@ enum InputMode {
 }
 
 pub fn run_view(mut root_view: RootView){
+    root_view.initialize();
     thread::spawn(move || {
         loop {
             match root_view.input_receiver.try_recv() {
@@ -69,6 +70,11 @@ impl RootView {
         };
         root_view.activate_bar();
         root_view
+    }
+    pub fn initialize(&mut self) {
+        for i in 0..self.views.len() {
+            self.views[i].initialize(&mut self.canvas);
+        }
     }
 
     // input button handling
