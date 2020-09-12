@@ -69,12 +69,21 @@ fn main()  -> Result<(), Box<dyn Error>> {
   // register a subscriber for state ojbects
   let (root_view_sender, root_view_receiver) = mpsc::channel();
   root_state.reg_state_sender(root_view_sender);
+    
+  let view_mutation_sender = root_state.get_mutation_sender();
 
   let mut root_view = RootView::new("/dev/fb1", root_view_receiver, &mut root_state, input_rx);
 
-  let mut settings_view = SettingsView::new();
+  let mut settings_view = SettingsView::new(view_mutation_sender, "settings".to_string());
     let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 28, 200, 32, GuiAction::new("Time Click", None))); 
+    let button2: Box<Button> = Box::new(Button::new("X".to_string(), 200, 28, 10, 32, GuiAction::new("Time Click", None))); 
+    let button3: Box<Button> = Box::new(Button::new("Y".to_string(), 220, 28, 10, 32, GuiAction::new("Time Click", None))); 
+
     settings_view.add_object(button, 0, 0, &mut root_state);
+    settings_view.add_object(button2, 0, 0, &mut root_state);
+    settings_view.add_object(button3, 0, 2, &mut root_state);
+
+
   root_view.add_view(settings_view);
 
   root_view.set_active_view(0);

@@ -2,6 +2,9 @@ use uuid::Uuid;
 
 use super::canvas::{Rect, Layer, Draw, Canvas, Text};
 use super::fb::Color;
+
+use super::joy_pad::ButtonAction;
+
 //use super::state::State;
 
 #[derive(Clone, Debug)]
@@ -84,6 +87,9 @@ pub trait Gui {
     }
     fn get_gui_state(&self) -> GuiState {
         GuiState::Base
+    }
+    fn handle_button_action(&mut self, ba: &ButtonAction) -> bool {
+        true
     }
 
 }

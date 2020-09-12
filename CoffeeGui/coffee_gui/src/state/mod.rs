@@ -16,7 +16,7 @@ pub fn run_state(mut root_state:  RootState) {
                 // lisen for mutators
                 let mutator: Mutator = match root_state.mutation_receiver.try_recv() {
                     Ok(mutator) => mutator,
-                    Err(_) => Mutator {name: "", value: "".to_string()}
+                    Err(_) => Mutator::new("", "".to_string(), 0)
 
                 };
                 // process mutation
@@ -134,8 +134,23 @@ impl RootState {
     pub fn mutate(&mut self, mutator: Mutator) {
         match mutator.name {
             "[time.current_time]" => {
-                println!("Matched Mutator");
                 self.state.time.current_time = mutator.value;
+            },
+            "[Move Selection To]" => {
+                match mutator.value.as_str() {
+                    "settings" => {
+                        let current = self.state.views.settings.iter().position(|x| match x { 
+                            GuiState::Selected => true,
+                            _ => false
+                            });
+                        match current {
+                            Some(position) => self.state.views.settings[position] = GuiState::Base,
+                            _ => ()
+                        };
+                        self.state.views.settings[mutator.number as usize] = GuiState::Selected;
+                    },
+                    _ => ()
+                };
             },
             _ => ()
         }        
@@ -144,8 +159,20 @@ impl RootState {
 
 pub struct Mutator {
     name: &'static str,
-    value: String
+    value: String,
+    number: isize
 }
+impl Mutator {
+    pub fn new(name: &'static str, value: String, number: isize) -> Mutator {
+        Mutator {
+            name,
+            value,
+            number
+        }
+    }
+
+}
+
 
 fn get_current_time() -> String {
     let local: DateTime<Local> = Local::now();
@@ -158,7 +185,8 @@ pub fn time_keeper(mutation_sender: Sender<Mutator>) {
             mutation_sender.send(
                 Mutator{
                     name: "[time.current_time]",
-                    value: get_current_time()
+                    value: get_current_time(),
+                    number: 0
                 }
             ).unwrap();
             println!("Tick");
