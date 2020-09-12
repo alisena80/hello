@@ -76,8 +76,8 @@ fn main()  -> Result<(), Box<dyn Error>> {
 
   let mut settings_view = SettingsView::new(view_mutation_sender, "settings".to_string());
     let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 28, 200, 32, GuiAction::new("Time Click", None))); 
-    let button2: Box<Button> = Box::new(Button::new("X".to_string(), 200, 28, 10, 32, GuiAction::new("Time Click", None))); 
-    let button3: Box<Button> = Box::new(Button::new("Y".to_string(), 220, 28, 10, 32, GuiAction::new("Time Click", None))); 
+    let button2: Box<Button> = Box::new(Button::new("X".to_string(), 200, 90, 10, 32, GuiAction::new("Time Click", None))); 
+    let button3: Box<Button> = Box::new(Button::new("Y".to_string(), 220, 90, 10, 32, GuiAction::new("Time Click", None))); 
 
     settings_view.add_object(button, 0, 0, &mut root_state);
     settings_view.add_object(button2, 0, 0, &mut root_state);
