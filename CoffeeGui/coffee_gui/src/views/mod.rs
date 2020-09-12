@@ -476,7 +476,13 @@ impl SettingsView {
         let original_selected_object = self.selected_object;
         // current cell
         let current_cell_length = self.nav_index[self.selected_row][self.selected_column].len();
-        let current_cell_index = self.nav_index[self.selected_row][self.selected_column].iter().position(|x| *x == self.selected_object).unwrap();
+        let current_cell_index: usize;
+        match self.nav_index[self.selected_row][self.selected_column].iter().position(|x| *x == self.selected_object) {
+            Some(x) => current_cell_index = x,
+            None => {
+                panic!("Could not find any objects matching selected_object: {}", self.selected_object);
+            }
+        }
         // move left one in cell
         if (current_cell_index as isize) >= 1 && amount < 0 {
             self.selected_object = self.nav_index[self.selected_row][self.selected_column][current_cell_index - 1];
