@@ -242,6 +242,9 @@ impl View for SettingsView {
         // set first object as selected upon activation
         if self.objects.len() > 0 {
             self.selected_object = 0;
+            // find what cell that object is in
+            self.selected_column = 0;
+            self.selected_row = 0;
             self.mutation_sender.send( Mutator::new("[Move Selection To]", self.name.clone(), self.selected_object as isize) ).unwrap();
         }
         true
