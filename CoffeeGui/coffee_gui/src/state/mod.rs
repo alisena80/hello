@@ -138,21 +138,22 @@ impl RootState {
                 self.state.time.current_time = mutator.value;
             },
             "[Move Selection To]" => {
-//                match mutator.value.as_str() {
-//                    "settings" => {
-                        let current = self.state.views.get(mutator.value.as_str()).unwrap().iter().position(|x| match x { 
-                            GuiState::Selected => true,
-                            _ => false
-                            });
-                        match current {
-                            Some(position) => self.state.views.get_mut(mutator.value.as_str()).unwrap()[position] = GuiState::Base,
-                            _ => ()
-                        };
-                        self.state.views.get_mut(mutator.value.as_str()).unwrap()[mutator.number as usize] = GuiState::Selected;
-//                    },
-//                    _ => ()
-//                };
+                let current = self.state.views.get(mutator.value.as_str()).unwrap().iter().position(|x| match x { 
+                    GuiState::Selected => true,
+                    _ => false
+                    });
+                match current {
+                    Some(position) => self.state.views.get_mut(mutator.value.as_str()).unwrap()[position] = GuiState::Base,
+                    _ => ()
+                };
+                self.state.views.get_mut(mutator.value.as_str()).unwrap()[mutator.number as usize] = GuiState::Selected;
             },
+            "[Clicked Button]" => {
+                self.state.views.get_mut(mutator.value.as_str()).unwrap()[mutator.number as usize] = GuiState::Clicked;
+            },
+            "[Released Button]" => {
+                self.state.views.get_mut(mutator.value.as_str()).unwrap()[mutator.number as usize] = GuiState::Selected;
+            }
             _ => ()
         }        
     }
