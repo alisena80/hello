@@ -19,6 +19,7 @@ mod actions;
 
 
 use views::*;
+use views::ViewStateUpdater;
 
 use gui_tk::*;
 mod state;
@@ -74,7 +75,14 @@ fn main()  -> Result<(), Box<dyn Error>> {
 
   let mut root_view = RootView::new("/dev/fb1", root_view_receiver, &mut root_state, input_rx);
 
-  let mut settings_view = SettingsView::new(view_mutation_sender, "settings".to_string());
+  let settings_update_fn: ViewStateUpdater = | objects, state, canvas | {
+
+        objects[0].set_text(state.time.current_time.clone(), canvas);
+
+  };
+
+
+  let mut settings_view = SettingsView::new(view_mutation_sender, "settings".to_string(), settings_update_fn);
     let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 28, 200, 32, GuiAction::new("Time Click", None))); 
     let button2: Box<Button> = Box::new(Button::new("X".to_string(), 200, 90, 10, 32, GuiAction::new("Time Click", None))); 
     let button3: Box<Button> = Box::new(Button::new("Y".to_string(), 220, 90, 10, 32, GuiAction::new("Time Click", None))); 

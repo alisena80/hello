@@ -174,7 +174,7 @@ impl InfoBar {
     pub fn new(root_state: &mut RootState) -> InfoBar {
         let mut objects: Vec<Box<dyn Gui + Send>> = vec![];
         let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 0, 140, 28, GuiAction::new("Time Click", None)));
-        root_state.state.views.bar.push(button.gui_state.clone());
+        root_state.state.views.get_mut("bar").unwrap().push(button.gui_state.clone());
         objects.push(button);
 
         InfoBar {
@@ -195,7 +195,7 @@ impl InfoBar {
     pub fn update(&mut self, state: State, canvas: &mut Canvas) -> bool{
         //update each object in the view with the correct state data
         self.objects[0].set_text(state.time.current_time.clone(), canvas);
-        self.objects[0].set_gui_state(state.views.bar[0].clone(), canvas);
+        self.objects[0].set_gui_state(state.views.get("bar").unwrap()[0].clone(), canvas);
         true
     }
 
@@ -221,7 +221,8 @@ pub struct SettingsView {
     selected_column: usize,
     selected_object: usize,
     mutation_sender: Sender<Mutator>,
-    name: String
+    name: String,
+    update_fn: ViewStateUpdater
 }
 impl View for SettingsView {
     fn initialize(&mut self, canvas: &mut Canvas) -> bool {
@@ -251,10 +252,14 @@ impl View for SettingsView {
        // all objects 
     }
     fn update(&mut self, state: State, canvas: &mut Canvas) -> bool {
-        //update each object in the view with the correct state data
-        self.objects[0].set_text(state.time.current_time.clone(), canvas);
+        // update each object in the view with the correct state data
+        // each view will likely have its own linkage to state data
+        // so we let the author of the view provide their own updater_fn
+        let update_fn_actor: ViewStateUpdater = self.update_fn;
+
+        update_fn_actor(&mut self.objects, &state, canvas);
         for i in 0..self.objects.len() {
-            self.objects[i].set_gui_state(state.views.settings[i].clone(), canvas);
+            self.objects[i].set_gui_state(state.views.get(&self.name[..]).unwrap()[i].clone(), canvas);
         }
         true 
     }
@@ -290,8 +295,10 @@ impl View for SettingsView {
     }   
 }
 
+pub type ViewStateUpdater = fn(&mut  Vec<Box<dyn Gui + Send>>, &State, &mut Canvas );
+
 impl SettingsView {
-    pub fn new(mutation_sender: Sender<Mutator>, name: String) -> SettingsView {
+    pub fn new(mutation_sender: Sender<Mutator>, name: String, update_fn: ViewStateUpdater ) -> SettingsView {
         let mut objects: Vec<Box<dyn Gui + Send>> = vec![];
         let mut nav_index: Vec<Vec<Vec<usize>>> = vec![
                                                       vec![
@@ -319,12 +326,13 @@ impl SettingsView {
             selected_column,
             selected_object,
             mutation_sender,
-            name
+            name,
+            update_fn
         }
     }
     pub fn add_object(&mut self, object: Box<dyn Gui + Send>, row: usize, column: usize, root_state: &mut RootState) {
         let object_index = self.objects.len(); //
-        root_state.state.views.settings.push(object.get_gui_state());
+        root_state.state.views.get_mut(&self.name[..]).unwrap().push(object.get_gui_state());
         self.objects.push(object);
         if self.nav_index.len() > row && self.nav_index[row].len() > column {
             self.nav_index[row][column].push(object_index);

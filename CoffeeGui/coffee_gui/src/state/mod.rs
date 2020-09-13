@@ -1,6 +1,6 @@
 use std::sync::mpsc::{Sender, Receiver, channel};
 use std::thread;
-
+use std::collections::HashMap;
 use std::time::{Instant,  Duration};
 
 //use chrono::format::strftime;
@@ -50,7 +50,7 @@ pub struct State {
     pub tank: TankState,
     pub time: TimeState,
     pub settings: SettingsState,
-    pub views: ViewsState
+    pub views: HashMap<&'static str, Vec<GuiState>>
 }
 
 #[derive(Clone, Debug)]
@@ -88,6 +88,12 @@ pub struct ViewsState {
 impl RootState {
     pub fn new() -> RootState {
         let (sender, receiver) = channel();
+        let mut views: HashMap<&str, Vec<GuiState>> = HashMap::new();
+        views.insert("bar", vec![]);
+        views.insert("boiler", vec![]);
+        views.insert("steamer", vec![]);
+        views.insert("settings", vec![]);
+
         RootState {
             state: State {
                 boiler: BoilerState {
@@ -107,12 +113,7 @@ impl RootState {
                     i: 0,
                     d: 0
                 },
-                views: ViewsState{
-                    bar: vec![],
-                    boiler: vec![],
-                    steamer: vec![],
-                    settings: vec![]
-                }
+                views,
             },
             state_senders: vec![],
             mutation_receiver: receiver,
@@ -137,20 +138,20 @@ impl RootState {
                 self.state.time.current_time = mutator.value;
             },
             "[Move Selection To]" => {
-                match mutator.value.as_str() {
-                    "settings" => {
-                        let current = self.state.views.settings.iter().position(|x| match x { 
+//                match mutator.value.as_str() {
+//                    "settings" => {
+                        let current = self.state.views.get(mutator.value.as_str()).unwrap().iter().position(|x| match x { 
                             GuiState::Selected => true,
                             _ => false
                             });
                         match current {
-                            Some(position) => self.state.views.settings[position] = GuiState::Base,
+                            Some(position) => self.state.views.get_mut(mutator.value.as_str()).unwrap()[position] = GuiState::Base,
                             _ => ()
                         };
-                        self.state.views.settings[mutator.number as usize] = GuiState::Selected;
-                    },
-                    _ => ()
-                };
+                        self.state.views.get_mut(mutator.value.as_str()).unwrap()[mutator.number as usize] = GuiState::Selected;
+//                    },
+//                    _ => ()
+//                };
             },
             _ => ()
         }        
