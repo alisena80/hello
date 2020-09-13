@@ -4,8 +4,7 @@ use super::canvas::{Rect, Layer, Draw, Canvas, Text};
 use super::fb::Color;
 
 use super::joy_pad::ButtonAction;
-
-//use super::state::State;
+use super::joy_pad::Action as JAction;
 
 #[derive(Clone, Debug)]
 pub enum GuiState{
@@ -88,8 +87,8 @@ pub trait Gui {
     fn get_gui_state(&self) -> GuiState {
         GuiState::Base
     }
-    fn handle_button_action(&mut self, ba: &ButtonAction) -> bool {
-        true
+    fn handle_button_action(&mut self, ba: &ButtonAction) -> (bool, Option<&'static str>, Option<GuiAction>)  {
+        (true, None, None)
     }
 
 }
@@ -252,6 +251,27 @@ impl Gui for Button {
         self.gui_state.clone()
     }
 
+    fn handle_button_action(&mut self, ba: &ButtonAction) -> (bool, Option<&'static str>, Option<GuiAction>) {
+        match ba.code {
+            6 => {
+                match ba.action {
+                    JAction::Pressed => {
+                            (false, Some("[Clicked Button]"), Some(self.action.clone()))
+                        },
+                    JAction::Released => {
+                            (true, Some("[Released Button]"), None)
+                        },
+                    _ => (false, None, None)
+                }
+            },    
+            _ => (false, None, None)
+        }
+
+        // true // returns back to view input handle
+        // false // keeps input mode here
+    }
+
+
 }
 
 
@@ -279,7 +299,7 @@ pub struct TextBox {
     pub name: &'static str
 }
 
-
+#[derive(Clone, Debug)]
 pub struct GuiAction {
     name: &'static str,
     values: Option<Vec<&'static str>>

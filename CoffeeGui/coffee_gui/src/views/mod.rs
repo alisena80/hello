@@ -279,7 +279,7 @@ impl View for SettingsView {
                 match ba.code {
                     0 => (), // go home -- should be handled by root
                     1 => self.escape(),
-                    6 => self.enter(),
+                    6 => self.send_to_selected(ba),
                     _ => self.nav(ba)
                 }
                 
@@ -343,7 +343,7 @@ impl SettingsView {
     }
     pub fn escape(&mut self) {}
 
-    pub fn enter(&mut self) {}
+
 
     pub fn nav(&mut self, ba: &ButtonAction) {
         // is there something in the current cell?
@@ -512,7 +512,17 @@ impl SettingsView {
     }
     
     pub fn send_to_selected(&mut self, ba: &ButtonAction) {
-        self.objects[self.selected_object].handle_button_action(ba);        
+        let (return_control, mutation, gui_action) = self.objects[self.selected_object].handle_button_action(ba);
+        match mutation {
+            Some(mutate) => self.mutation_sender.send(Mutator::new(mutate, self.name.clone(), self.selected_object as isize  )).unwrap(),
+            None => ()
+        }
+
+        if return_control {
+            self.input_mode = InputMode::Navigate;    
+        } else {
+            self.input_mode = InputMode::Manipulate;
+        }
     }
 
 }
