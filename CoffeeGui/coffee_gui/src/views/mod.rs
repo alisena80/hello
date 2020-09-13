@@ -44,6 +44,7 @@ pub fn run_view(mut root_view: RootView){
                 Err(_) => ()
             };
         };
+        thread::sleep(Duration::from_millis(5));
     });
 }
 
