@@ -16,7 +16,7 @@ mod views;
 mod gui_tk;
 mod actions;
 
-
+use actions::{RootController, run_controller};
 
 use views::*;
 use views::ViewStateUpdater;
@@ -72,14 +72,19 @@ fn main()  -> Result<(), Box<dyn Error>> {
 
     let view_mutation_sender = root_state.get_mutation_sender();
 
-    let mut root_view = RootView::new("/dev/fb1", root_view_receiver, &mut root_state, input_rx);
+    // Initialize the RootController
+    let root_controller = RootController::new();
+
+    let action_sender = root_controller.get_action_sender();
+
+    let mut root_view = RootView::new("/dev/fb1", root_view_receiver, &mut root_state, input_rx, action_sender);
 
     let settings_update_fn: ViewStateUpdater = | objects, state, canvas | {
         objects[0].set_text(state.time.current_time.clone(), canvas);
     };
 
 
-    let mut settings_view = SettingsView::new(view_mutation_sender, "settings".to_string(), settings_update_fn);
+    let mut settings_view = View::new(view_mutation_sender, "settings".to_string(), settings_update_fn);
     let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 28, 200, 32, GuiAction::new("Time Click", None))); 
     let button2: Box<Button> = Box::new(Button::new("X".to_string(), 200, 90, 10, 32, GuiAction::new("Time Click", None))); 
     let button3: Box<Button> = Box::new(Button::new("Y".to_string(), 220, 90, 10, 32, GuiAction::new("Time Click", None))); 
@@ -96,8 +101,8 @@ fn main()  -> Result<(), Box<dyn Error>> {
 
     run_state(root_state);
 
-
-
+    run_controller(root_controller);
+/*
     let controller_thread = thread::spawn(move || {
     loop { 
         thread::sleep(Duration::from_millis(20));
@@ -110,6 +115,7 @@ fn main()  -> Result<(), Box<dyn Error>> {
         Ok(_) => (),
         Err(_) => ()
     }
+*/
     Ok(())
 
 }

@@ -64,29 +64,39 @@ pub trait Gui {
 //    fn draw(&self, canvas: &mut Canvas) -> bool;
 
     // move the layers over to the canvas
+    #[allow(unused_variables)]
     fn initialize(&mut self, canvas: &mut Canvas) -> bool {
         true
     } 
 
+
+    #[allow(unused_variables)]
     fn activate(&mut self, canvas: &mut Canvas) -> bool {
         // sets the current state layers to active on the canvas
         true
     }
 
+
+    #[allow(unused_variables)]
     fn deactivate(&mut self, canvas: &mut Canvas) -> bool {
         true
     }
 
+    #[allow(unused_variables)]
     fn set_text(&mut self,  text: String, canvas: &mut Canvas){
         ()
     }
 
+
+    #[allow(unused_variables)]
     fn set_gui_state(&mut self, gui_state: GuiState, canvas: &mut Canvas){
         ()
     }
     fn get_gui_state(&self) -> GuiState {
         GuiState::Base
     }
+
+    #[allow(unused_variables)]
     fn handle_button_action(&mut self, ba: &ButtonAction) -> (bool, Option<&'static str>, Option<GuiAction>)  {
         (true, None, None)
     }
@@ -274,25 +284,28 @@ impl Gui for Button {
 
 }
 
-
+#[allow(dead_code)]
 pub struct Menu {
     pub items: Vec<MenuItem>,
     pub action: GuiAction,
     pub name: &'static str
 }
 
+#[allow(dead_code)]
 pub struct MenuItem {
     pub text: &'static str,
     pub action: GuiAction,
     pub name: &'static str
 }
 
+#[allow(dead_code)]
 pub struct GuiImage {
     pub path: &'static str,
     pub action: GuiAction,
     pub name: &'static str
 }
 
+#[allow(dead_code)]
 pub struct TextBox {
     pub text: &'static str,
     pub action: GuiAction,
@@ -301,8 +314,8 @@ pub struct TextBox {
 
 #[derive(Clone, Debug)]
 pub struct GuiAction {
-    name: &'static str,
-    values: Option<Vec<&'static str>>
+    pub name: &'static str,
+    pub values: Option<Vec<&'static str>>
 }
 
 impl GuiAction {

@@ -49,11 +49,13 @@ impl Canvas {
 
     }
 
+    #[allow(dead_code)]
     pub fn clear(&mut self){
         self.screen.clear();
         self.screen.flush();
     }
 
+    #[allow(dead_code)]
     pub fn slide_layer_group(&mut self, group: &'static str, x: i32, y: i32) {
         for layer in &mut self.layers {
             if &layer.group == group {

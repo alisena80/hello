@@ -123,12 +123,14 @@ impl Pad {
 
 pub mod helpers {
 
+    #[allow(dead_code)]
     pub fn ba_to_console(button_actions: Vec<super::ButtonAction>, button_initializers: &Vec<super::ButtonInitializer>){
         for ba in button_actions{
             print_ba(&ba.action, ba.code, code_to_key(ba.code, button_initializers));
         }
     }
 
+    #[allow(dead_code)]
     fn print_ba<T>(action: &super::Action, code: u8, key: T) where T: std::fmt::Display {
         match action {
             super::Action::Pressed => println!("{} was pressed code: {}", key, code),
@@ -137,6 +139,7 @@ pub mod helpers {
         }
     }
 
+    #[allow(dead_code)]
     fn code_to_key(code: u8, button_initializers: &Vec<super::ButtonInitializer>) -> &str{
         let bi = button_initializers.iter().find(|bi|
             bi.code == code
