@@ -1,8 +1,20 @@
 use std::error::Error;
 
-use rppal::gpio::Gpio;
-use rppal::gpio::Level;
-use rppal::gpio::InputPin;
+use rppal::gpio::{ Gpio, Level, InputPin};
+
+use std::sync::mpsc::Sender;
+use std::thread;
+use std::time::{Duration};
+
+pub fn run_pad(mut pad: Pad) {
+    thread::spawn(move || {
+        loop {
+            let button_actions = pad.detect_changes();
+            pad.button_sender.send(button_actions).unwrap();
+            thread::sleep(Duration::from_millis(20));
+        }
+    });
+}
 
 pub struct ButtonInitializer {
     pub pin: u8,
@@ -31,7 +43,6 @@ impl Button {
         };
         button
     }
-
 }
 
 pub struct ButtonAction {
@@ -46,23 +57,25 @@ pub enum Action {
 }
 pub struct Pad {
     buttons: Vec<Button>,
+    pub button_sender: Sender<Vec<ButtonAction>>
 }
 
 impl Pad {
-  pub fn new( pins: &Vec<ButtonInitializer>) -> Result<Pad, Box<dyn Error>> {
+  pub fn new( pins: &Vec<ButtonInitializer>, button_sender: Sender<Vec<ButtonAction>>) -> Result<Pad, Box<dyn Error>> {
       let mut buttons : Vec<Button> = Vec::with_capacity(pins.len());
+
       let gpio = Gpio::new()?;
       for pin in pins {
         let button = Button::new(gpio.get(pin.pin)?.into_input(), pin.code);
         buttons.push(button);
       }
       let pad: Pad = Pad {
-        buttons: buttons
+        buttons: buttons,
+        button_sender
       };
      Ok(pad)
   }
 
-  
   pub fn detect_changes(&mut self) -> Vec<ButtonAction> {
       let mut button_actions: Vec<ButtonAction> = Vec::with_capacity(self.buttons.len());
 

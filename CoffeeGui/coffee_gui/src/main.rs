@@ -1,37 +1,28 @@
-use std::error::Error;
-use std::thread;
-use std::time::Duration;
-use std::sync::mpsc;
-
-mod joy_pad;
-use joy_pad::Pad;
-use joy_pad::ButtonInitializer;
-
-
-mod fb;
-mod canvas;
-
-
-mod views;
-mod gui_tk;
-mod actions;
-
-use actions::{RootController, run_controller};
-
-use views::*;
-use views::ViewStateUpdater;
-
-use gui_tk::*;
-mod state;
-use state::{RootState,  time_keeper, run_state};
-
-
-
+// Crates
 extern crate framebuffer;
 extern crate image;
 extern crate rusttype;
 
-fn main()  -> Result<(), Box<dyn Error>> {
+// Std lib imports
+use std::sync::mpsc;
+
+// Modules
+mod joy_pad;
+mod fb;
+mod canvas;
+mod views;
+mod gui_tk;
+mod controllers;
+mod state;
+
+// Basic module bits
+use joy_pad::{ Pad, ButtonInitializer, run_pad };
+use controllers::{RootController, run_controller};
+use views::*;
+use gui_tk::*;
+use state::{RootState,  time_keeper, run_state};
+
+fn main()  { 
     // setup hw buttons
     let button_initializers = vec![
         ButtonInitializer {pin: 5, code: 0, key: "b"},
@@ -43,20 +34,14 @@ fn main()  -> Result<(), Box<dyn Error>> {
         ButtonInitializer {pin: 4, code:  6, key: "hat"},
     ];
 
-    let mut pad =  Pad::new(&button_initializers)?;
-    //create channesl for threads to send data to central loop
     let (input_tx, input_rx) = mpsc::channel();
-    thread::spawn(move || {
-        loop {
-            let button_actions = pad.detect_changes();
-            input_tx.send(button_actions).unwrap();
-            thread::sleep(Duration::from_millis(20));
-        }
+    let pad =  match Pad::new(&button_initializers, input_tx) {
+        Ok(pad) => pad,
+        Err(x) => panic!("Error Starting Input Pad: {}", x)
+    };
 
-    });
-
-
-
+    //create channesl for threads to send data to central loop
+    run_pad(pad);
 
     // setup the root state object
     let mut root_state = RootState::new(); 
@@ -69,20 +54,15 @@ fn main()  -> Result<(), Box<dyn Error>> {
     // register a subscriber for state ojbects
     let (root_view_sender, root_view_receiver) = mpsc::channel();
     root_state.reg_state_sender(root_view_sender);
-
     let view_mutation_sender = root_state.get_mutation_sender();
 
     // Initialize the RootController
     let root_controller = RootController::new();
-
     let action_sender = root_controller.get_action_sender();
-
     let mut root_view = RootView::new("/dev/fb1", root_view_receiver, &mut root_state, input_rx, action_sender);
-
     let settings_update_fn: ViewStateUpdater = | objects, state, canvas | {
         objects[0].set_text(state.time.current_time.clone(), canvas);
     };
-
 
     let mut settings_view = View::new(view_mutation_sender, "settings".to_string(), settings_update_fn);
     let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 28, 200, 32, GuiAction::new("Time Click", None))); 
@@ -94,31 +74,10 @@ fn main()  -> Result<(), Box<dyn Error>> {
     settings_view.add_object(button3, 0, 2, &mut root_state);
 
     root_view.add_view(settings_view);
-
     root_view.set_active_view(0);
 
     run_view(root_view);
-
     run_state(root_state);
-
-    run_controller(root_controller);
-/*
-    let controller_thread = thread::spawn(move || {
-    loop { 
-        thread::sleep(Duration::from_millis(20));
-    }
-
-
-
-    });
-    match controller_thread.join() {
-        Ok(_) => (),
-        Err(_) => ()
-    }
-*/
-    Ok(())
+    run_controller(root_controller); //joined thread
 
 }
-
-
-
