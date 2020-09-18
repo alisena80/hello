@@ -16,6 +16,8 @@ pub fn run_controller(mut root_controller: RootController) {
             thread::sleep(Duration::from_millis(5));
         };
     });
+
+    // ... main thread waits here, I think.
     match controller_thread.join() {
         Ok(_) => (),
         Err(_) => ()
@@ -54,20 +56,44 @@ impl RootController {
 
 #[allow(dead_code)]
 pub struct Controller {
-    actions: HashMap<&'static str, Action>
+    actions: HashMap<&'static str, Action>,
+    models: HashMap<&'static str, Box<dyn Model + Send>>
 }
 
 #[allow(dead_code)]
 impl Controller {
     pub fn new() -> Controller {
         let actions: HashMap<&'static str, Action> = HashMap::new();
+        let models: HashMap<&'static str, Box<dyn Model + Send>> = HashMap::new();
         Controller {
-            actions
+            actions,
+            models
         }
     }
+
+    
 }
 
 pub type Action = fn();
+
+trait Model {}
+
+/*
+
+GuiAction.controller = settings
+GuiAction.action = start_boiler
+GuiAction.args = vec["steam"]
+
+root.controllers["settings"]["start_boiler"](vec[steam])
+
+Action start_boiler([steam]) {
+    models[boiler]
+    
+}
+
+
+
+*/
 
 
 // router  action loop
