@@ -1,19 +1,10 @@
 // Crates
-extern crate framebuffer;
-extern crate image;
-extern crate rusttype;
+extern crate lovett;
+extern crate serde;
+extern crate bincode;
 
-// Modules
-mod joy_pad;
-mod fb;
-mod canvas;
-mod views;
-mod gui_tk;
-mod controller;
-mod state;
 mod app;
 
-// for building and running the app struct
 use app::*;
 
 fn main()  { 
