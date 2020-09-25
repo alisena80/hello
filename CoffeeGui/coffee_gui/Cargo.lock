@@ -243,7 +243,7 @@ checksum = "a2f02823cf78b754822df5f7f268fb59822e7296276d3e069d8e8cb26a14bd10"
 [[package]]
 name = "lovett"
 version = "0.1.0"
-source = "git+https://github.com/kcculhwch/lovett#63230f243234bd55af7b8e1ab9c2ee68555fe7dc"
+source = "git+https://github.com/kcculhwch/lovett#7c12519eb1331664b74399c3c1dfe0188cbf62f5"
 dependencies = [
  "bincode",
  "chrono",

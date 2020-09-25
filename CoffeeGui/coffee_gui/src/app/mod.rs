@@ -2,7 +2,7 @@ use lovett::joy_pad::{ Pad, ButtonInitializer, run_pad };
 use lovett::controller::{RootController, run_controller};
 use lovett::views::*;
 use lovett::gui_tk::*;
-use lovett::state::{RootState,  time_keeper, run_state};
+use lovett::state::{RootState,  time_keeper, run_state, StateMutator};
 use std::sync::mpsc;
 
 use std::collections::HashMap;
@@ -84,6 +84,15 @@ impl App {
 
         // setup the root state object
         let mut root_state = RootState::new(bincode::serialize(&state).unwrap()); 
+
+
+        // create the mutator handlers
+        let time_updater: StateMutator = |state, mutator| {
+            let mut decoded_state = state_decoder(state);
+            decoded_state.time.current_time = mutator.value;
+            bincode::serialize(&decoded_state).unwrap()
+        };
+        root_state.mutators.insert("[time.current_time]", time_updater);
 
         // get a state mutation sender for time keeping thread
         // we setup a time keeper thread on a 1 second resolution to trigger initial state senders
