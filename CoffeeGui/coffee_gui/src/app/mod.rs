@@ -5,6 +5,8 @@ use lovett::gui_tk::*;
 use lovett::state::{RootState,  time_keeper, run_state, StateMutator};
 use std::sync::mpsc;
 
+use std::time::{SystemTime};
+
 use std::collections::HashMap;
 
 mod state;
@@ -69,7 +71,7 @@ impl App {
                         level: 0
                     },
                     time: TimeState {
-//                        turned_on: SystemTime::now(),
+                        turned_on: SystemTime::now(),
                         current_time: "00:00:00 XX".to_string()
                     },
                     settings: SettingsState {
@@ -92,7 +94,41 @@ impl App {
             decoded_state.time.current_time = mutator.value;
             bincode::serialize(&decoded_state).unwrap()
         };
+
+        let selection_mover: StateMutator = |state, mutator| {
+            let mut decoded_state = state_decoder(state);
+            let current = decoded_state.views.get(mutator.value.as_str()).unwrap().iter().position(|x| match x { 
+                GuiState::Selected => true,
+                _ => false
+            });
+            match current {
+                Some(position) => decoded_state.views.get_mut(mutator.value.as_str()).unwrap()[position] = GuiState::Base,
+                _ => ()
+            };
+            decoded_state.views.get_mut(mutator.value.as_str()).unwrap()[mutator.number as usize] = GuiState::Selected;
+            bincode::serialize(&decoded_state).unwrap()
+        };
+
+
+        let button_clicker: StateMutator = |state, mutator| {
+            let mut decoded_state = state_decoder(state);
+            decoded_state.views.get_mut(mutator.value.as_str()).unwrap()[mutator.number as usize] = GuiState::Clicked;
+            bincode::serialize(&decoded_state).unwrap()
+        };
+
+
+        let button_releaser: StateMutator = |state, mutator| {
+            let mut decoded_state = state_decoder(state);
+            decoded_state.views.get_mut(mutator.value.as_str()).unwrap()[mutator.number as usize] = GuiState::Selected;
+            bincode::serialize(&decoded_state).unwrap()
+        };
+
+
         root_state.mutators.insert("[time.current_time]", time_updater);
+        root_state.mutators.insert("[Move Selection To]", selection_mover);
+        root_state.mutators.insert("[Clicked Button]", button_clicker);
+        root_state.mutators.insert("[Released Button]", button_releaser);
+
 
         // get a state mutation sender for time keeping thread
         // we setup a time keeper thread on a 1 second resolution to trigger initial state senders

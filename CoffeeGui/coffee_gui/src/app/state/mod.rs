@@ -2,7 +2,7 @@ use serde::{Serialize, Deserialize};
 
 use std::collections::HashMap;
 use lovett::gui_tk::*;
-//use std::time::{Instant};
+use std::time::{SystemTime};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct State {
@@ -26,7 +26,7 @@ pub struct TankState {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct TimeState {
-    //pub turned_on:  Instant,
+    pub turned_on: SystemTime,
     pub current_time: String
 }
 
