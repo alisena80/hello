@@ -155,7 +155,7 @@ impl App {
 
         root_view.add_view(settings_view);
         root_view.set_active_view(0);
-
+        root_state.state = bincode::serialize(&state).unwrap();
 
         App {
             root_view,
