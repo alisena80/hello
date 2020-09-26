@@ -88,18 +88,11 @@ name = "coffee_gui"
 version = "0.1.0"
 dependencies = [
  "bincode",
- "chrono",
  "env_logger",
- "framebuffer",
- "image",
  "lovett",
- "rand",
- "rppal",
- "rusttype",
  "serde",
  "serde_bytes",
  "serde_derive",
- "uuid",
 ]
 
 [[package]]
