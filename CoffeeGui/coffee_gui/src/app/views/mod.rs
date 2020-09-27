@@ -51,7 +51,7 @@ pub fn setup(root_view_state_receiver: Receiver<Vec<u8>>, joy_pad_input_rx: Rece
 
         // add buttons
         let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 28, 200, 32, GuiAction::new("Time Click", None))); 
-        let button2: Box<Button> = Box::new(Button::new("X".to_string(), 200, 90, 10, 32, GuiAction::new("Time Click", None))); 
+        let button2: Box<Button> = Box::new(Button::new("X".to_string(), 0, 90, 10, 32, GuiAction::new("Time Click", None))); 
         let button3: Box<Button> = Box::new(Button::new("Y".to_string(), 220, 90, 10, 32, GuiAction::new("Time Click", None))); 
         
         // add buttons to state
@@ -61,8 +61,8 @@ pub fn setup(root_view_state_receiver: Receiver<Vec<u8>>, joy_pad_input_rx: Rece
 
         // add buttons to view
         settings_view.add_object(button, 0, 0);
-        settings_view.add_object(button2, 0, 0);
-        settings_view.add_object(button3, 1, 0);
+        settings_view.add_object(button2, 1, 0);
+        settings_view.add_object(button3, 2, 2);
 
         
         root_view.add_view(settings_view);
