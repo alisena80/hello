@@ -51,18 +51,21 @@ pub fn setup(root_view_state_receiver: Receiver<Vec<u8>>, joy_pad_input_rx: Rece
 
         // add buttons
         let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 28, 200, 32, GuiAction::new("Time Click", None))); 
-        let button2: Box<Button> = Box::new(Button::new("X".to_string(), 0, 90, 10, 32, GuiAction::new("Time Click", None))); 
-        let button3: Box<Button> = Box::new(Button::new("Y".to_string(), 220, 90, 10, 32, GuiAction::new("Time Click", None))); 
-        
+        let button2: Box<Button> = Box::new(Button::new("X".to_string(), 0, 90, 20, 32, GuiAction::new("Time Click", None))); 
+        let button3: Box<Button> = Box::new(Button::new("Y".to_string(), 100, 150, 20, 32, GuiAction::new("Time Click", None))); 
+        let button4: Box<Button> = Box::new(Button::new("Z".to_string(), 0, 150, 20, 32, GuiAction::new("Time Click", None))); 
+       
         // add buttons to state
         state.views.get_mut("settings").unwrap().push(button.get_gui_state());
         state.views.get_mut("settings").unwrap().push(button2.get_gui_state());
         state.views.get_mut("settings").unwrap().push(button3.get_gui_state());
+        state.views.get_mut("settings").unwrap().push(button4.get_gui_state());
 
         // add buttons to view
         settings_view.add_object(button, 0, 0);
         settings_view.add_object(button2, 1, 0);
         settings_view.add_object(button3, 2, 2);
+        settings_view.add_object(button4, 2, 0);
 
         
         root_view.add_view(settings_view);
