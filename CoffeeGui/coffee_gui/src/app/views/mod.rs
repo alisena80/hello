@@ -46,7 +46,7 @@ pub fn setup(root_view_state_receiver: Receiver<Vec<u8>>, joy_pad_input_rx: Rece
                 objects[0].set_text(decoded_state.time.current_time.clone(), canvas);
             }
             for i in 0..objects.len() {
-                let current_state = objects[0].get_gui_state();
+                let current_state = objects[i].get_gui_state();
                 let new_state = decoded_state.views.get("settings").unwrap()[i].clone();
                 
                 if let GuiState::Base = current_state {
