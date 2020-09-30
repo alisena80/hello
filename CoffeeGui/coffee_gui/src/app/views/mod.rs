@@ -12,14 +12,15 @@ pub fn setup(root_view_state_receiver: Receiver<Vec<u8>>, joy_pad_input_rx: Rece
         //decode state
         let mut state = super::state_decoder(&root_state.state[..]);
 
-
         // create info_bar for the root_view
         // - requires a mutation sender to send mutator signals to the state
         // - requires a ViewStateUpdater fn to process state changes
         let info_bar_view_mutation_sender = root_state.get_mutation_sender();
         let bar_update_fn: ViewStateUpdater = |objects, state, canvas| {
             let decoded_state: State = super::state_decoder(state);
-            objects[0].set_text(decoded_state.time.current_time.clone(), canvas);
+            if &decoded_state.time.current_time[..] != objects[0].get_text() {
+                objects[0].set_text(decoded_state.time.current_time.clone(), canvas);
+            }
         };
         let mut info_bar = View::new(info_bar_view_mutation_sender, "bar".to_string(), bar_update_fn);
 
@@ -41,9 +42,37 @@ pub fn setup(root_view_state_receiver: Receiver<Vec<u8>>, joy_pad_input_rx: Rece
             let decoded_state: State = super::state_decoder(state);
             // decode state from Vec<u8>
             // update all of this views things based on the value of state
-            objects[0].set_text(decoded_state.time.current_time.clone(), canvas);
+            if &decoded_state.time.current_time[..] != objects[0].get_text() {
+                objects[0].set_text(decoded_state.time.current_time.clone(), canvas);
+            }
             for i in 0..objects.len() {
-                objects[i].set_gui_state(decoded_state.views.get("settings").unwrap()[i].clone(), canvas);
+                let current_state = objects[0].get_gui_state();
+                let new_state = decoded_state.views.get("settings").unwrap()[i].clone();
+                
+                if let GuiState::Base = current_state {
+                    match new_state {
+                        GuiState::Base => (),
+                        _ => {
+                            objects[i].set_gui_state(decoded_state.views.get("settings").unwrap()[i].clone(), canvas);
+                        }
+                    }
+                }
+                if let GuiState::Clicked = current_state {
+                    match new_state {
+                        GuiState::Clicked => (),
+                        _ => {
+                            objects[i].set_gui_state(decoded_state.views.get("settings").unwrap()[i].clone(), canvas);
+                        }
+                    }
+                }
+                if let GuiState::Selected = current_state {
+                    match new_state {
+                        GuiState::Selected => (),
+                        _ => {
+                            objects[i].set_gui_state(decoded_state.views.get("settings").unwrap()[i].clone(), canvas);
+                        }
+                    }
+                }
             } 
         };
 
@@ -66,8 +95,7 @@ pub fn setup(root_view_state_receiver: Receiver<Vec<u8>>, joy_pad_input_rx: Rece
         settings_view.add_object(button2, 1, 0);
         settings_view.add_object(button3, 2, 2);
         settings_view.add_object(button4, 2, 0);
-
-        
+ 
         root_view.add_view(settings_view);
         root_view.set_active_view(0);
 
