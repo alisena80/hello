@@ -18,19 +18,21 @@ pub fn setup(root_view_state_receiver: Receiver<Vec<u8>>, joy_pad_input_rx: Rece
         let info_bar_view_mutation_sender = root_state.get_mutation_sender();
         let bar_update_fn: ViewStateUpdater = |objects, state, canvas| {
             let decoded_state: State = super::state_decoder(state);
-            if &decoded_state.time.current_time[..] != objects[0].get_text() {
-                objects[0].set_text(decoded_state.time.current_time.clone(), canvas);
+            if &decoded_state.time.current_time[..] != objects[1].get_text() {
+                objects[1].set_text(decoded_state.time.current_time.clone(), canvas);
             }
         };
         let mut info_bar = View::new(info_bar_view_mutation_sender, "bar".to_string(), bar_update_fn);
 
         // register gui elements for the info bar
         let bar_button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 0, 140, 28, GuiAction::new("Time Click", None)));
-        
+        let top_bar_block: Box<Block> = Box::new(Block::new(0,0, 240, 30, GuiAction::new("", None)));
         // add the button state tracker
         state.views.get_mut("bar").unwrap().push(bar_button.get_gui_state());
         // add it to the view
-        info_bar.add_object(bar_button, 0, 0);
+
+        info_bar.add_static_object(top_bar_block);
+        info_bar.add_static_object(bar_button);
 
         // create the root_view
         let mut root_view = RootView::new("/dev/fb1", root_view_state_receiver, joy_pad_input_rx, action_sender, info_bar);
