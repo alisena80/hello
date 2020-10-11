@@ -1,13 +1,13 @@
 pub mod pad_input;
 
 use lovett::joy_pad::ButtonAction;
-use lovett::views::{ RootView, ViewStateUpdater, View };
+use lovett::views::{ RootView, ViewStateUpdater, View, gui_state_updater };
 use super::state::State;
 use lovett::gui_tk::*;
 use lovett::state::RootState;
 use std::sync::mpsc::*;
 
-pub fn setup(root_view_state_receiver: Receiver<Vec<u8>>, joy_pad_input_rx: Receiver<Vec<ButtonAction>>, action_sender: Sender<GuiAction>, root_state: &mut RootState) -> RootView{
+pub fn setup(root_view_state_receiver: Receiver<Vec<u8>>, joy_pad_input_rx: Receiver<Vec<ButtonAction>>, action_sender: Sender<GuiAction>, root_state: &mut RootState) -> RootView {
 
     //decode state
     let mut state = super::state_decoder(&root_state.state[..]);
@@ -48,33 +48,8 @@ pub fn setup(root_view_state_receiver: Receiver<Vec<u8>>, joy_pad_input_rx: Rece
             objects[0].set_text(decoded_state.time.current_time.clone(), canvas);
         }
         for i in 0..objects.len() {
-            let current_state = objects[i].get_gui_state();
             let new_state = decoded_state.views.get("settings").unwrap()[i].clone();
-            
-            if let GuiState::Base = current_state {
-                match new_state {
-                    GuiState::Base => (),
-                    _ => {
-                        objects[i].set_gui_state(decoded_state.views.get("settings").unwrap()[i].clone(), canvas);
-                    }
-                }
-            }
-            if let GuiState::Clicked = current_state {
-                match new_state {
-                    GuiState::Clicked => (),
-                    _ => {
-                        objects[i].set_gui_state(decoded_state.views.get("settings").unwrap()[i].clone(), canvas);
-                    }
-                }
-            }
-            if let GuiState::Selected = current_state {
-                match new_state {
-                    GuiState::Selected => (),
-                    _ => {
-                        objects[i].set_gui_state(decoded_state.views.get("settings").unwrap()[i].clone(), canvas);
-                    }
-                }
-            }
+            gui_state_updater(&mut objects[i], new_state, &mut canvas);            
         } 
     };
 
