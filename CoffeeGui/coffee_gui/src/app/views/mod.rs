@@ -49,7 +49,7 @@ pub fn setup(root_view_state_receiver: Receiver<Vec<u8>>, joy_pad_input_rx: Rece
         }
         for i in 0..objects.len() {
             let new_state = decoded_state.views.get("settings").unwrap()[i].clone();
-            gui_state_updater(&mut objects[i], new_state, &mut canvas);            
+            gui_state_updater(&mut objects[i], new_state, canvas);            
         } 
     };
 
