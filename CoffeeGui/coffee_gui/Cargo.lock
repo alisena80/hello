@@ -397,7 +397,7 @@ dependencies = [
 [[package]]
 name = "lovett"
 version = "0.1.0"
-source = "git+https://github.com/kcculhwch/lovett?branch=ab_glyph_test#e64d4cf928b8f6e797d0d06ff16f01709be370c8"
+source = "git+https://github.com/kcculhwch/lovett?branch=ab_glyph_test#76118b26f8b10a835476dc7b0aeab7ba6b21c050"
 dependencies = [
  "bincode",
  "chrono",
