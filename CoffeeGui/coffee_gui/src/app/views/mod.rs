@@ -25,7 +25,7 @@ pub fn setup(root_view_state_receiver: Receiver<Vec<u8>>, joy_pad_input_rx: Rece
     let mut info_bar = View::new(info_bar_view_mutation_sender, "bar".to_string(), bar_update_fn);
 
     // register gui elements for the info bar
-    let bar_clock: Box<TextBlock> = Box::new(TextBlock::new("00:00:00 XX".to_string(), 0, 0, 140, 28, GuiAction::new("Time Click", None)));
+    let bar_clock: Box<TextBlock> = Box::new(TextBlock::new("00:00:00 XX".to_string(), 4, 0, 140, 28, GuiAction::new("Time Click", None)));
     let top_bar_block: Box<Block> = Box::new(Block::new(0,0, 240, 30, GuiAction::new("", None)));
     // add the button state tracker
     state.views.get_mut("bar").unwrap().push(bar_clock.get_gui_state());
@@ -56,10 +56,10 @@ pub fn setup(root_view_state_receiver: Receiver<Vec<u8>>, joy_pad_input_rx: Rece
     let mut settings_view = View::new(settings_view_mutation_sender, "settings".to_string(), settings_update_fn);
 
     // add buttons
-    let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 28, 200, 32, GuiAction::new("Time Click", None))); 
-    let button2: Box<Button> = Box::new(Button::new("X".to_string(), 0, 90, 20, 32, GuiAction::new("Time Click", None))); 
-    let button3: Box<Button> = Box::new(Button::new("Y".to_string(), 100, 150, 20, 32, GuiAction::new("Time Click", None))); 
-    let button4: Box<Button> = Box::new(Button::new("Z".to_string(), 0, 150, 20, 32, GuiAction::new("Time Click", None))); 
+    let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 30, 200, 32, GuiAction::new("Time Click", None))); 
+    let button2: Box<Button> = Box::new(Button::new("X".to_string(), 0, 90, 32, 32, GuiAction::new("Time Click", None))); 
+    let button3: Box<Button> = Box::new(Button::new("Y".to_string(), 100, 150, 32, 32, GuiAction::new("Time Click", None))); 
+    let button4: Box<Button> = Box::new(Button::new("Z".to_string(), 0, 150, 32, 32, GuiAction::new("Time Click", None))); 
    
     // add buttons to state
     state.views.get_mut("settings").unwrap().push(button.get_gui_state());
