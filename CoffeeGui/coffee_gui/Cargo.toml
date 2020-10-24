@@ -16,5 +16,13 @@ env_logger = "0.5.13"
 serde_bytes = "0.11.5"
 serde_derive = "1.0.116"
 
-[profile.release]
+[profile.bench]
 debug = 2
+opt-level = 3
+debug-assertions = false
+overflow-checks = false
+lto = false
+panic = 'unwind'
+incremental = false
+codegen-units = 16
+rpath = false
