@@ -1,17 +1,17 @@
 use lovett::state::*;
 use lovett::gui_tk::*;
-use super::*
+use super::*;
 
-;
+
 pub fn setup(root_state: &mut RootState) {
         // create the mutator handlers
-        let time_updater: StateMutator = |state, mutator| {
+        let time_updater: Mutator = |state, mutator| {
             let mut decoded_state = state_decoder(state);
             decoded_state.time.current_time = mutator.value;
             bincode::serialize(&decoded_state).unwrap()
         };
 
-        let selection_mover: StateMutator = |state, mutator| {
+        let selection_mover: Mutator = |state, mutator| {
             let mut decoded_state = state_decoder(state);
             let current = decoded_state.views.get(mutator.value.as_str()).unwrap().iter().position(|x| match x { 
                 GuiState::Selected => true,
@@ -26,14 +26,14 @@ pub fn setup(root_state: &mut RootState) {
         };
 
 
-        let button_clicker: StateMutator = |state, mutator| {
+        let button_clicker: Mutator = |state, mutator| {
             let mut decoded_state = state_decoder(state);
             decoded_state.views.get_mut(mutator.value.as_str()).unwrap()[mutator.number as usize] = GuiState::Clicked;
             bincode::serialize(&decoded_state).unwrap()
         };
 
 
-        let button_releaser: StateMutator = |state, mutator| {
+        let button_releaser: Mutator = |state, mutator| {
             let mut decoded_state = state_decoder(state);
             decoded_state.views.get_mut(mutator.value.as_str()).unwrap()[mutator.number as usize] = GuiState::Selected;
             bincode::serialize(&decoded_state).unwrap()

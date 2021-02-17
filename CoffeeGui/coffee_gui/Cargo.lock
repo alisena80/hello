@@ -113,7 +113,9 @@ name = "coffee_gui"
 version = "0.1.0"
 dependencies = [
  "bincode",
+ "chrono",
  "env_logger",
+ "log",
  "lovett",
  "serde",
  "serde_bytes",
@@ -397,7 +399,7 @@ dependencies = [
 [[package]]
 name = "lovett"
 version = "0.1.0"
-source = "git+https://github.com/kcculhwch/lovett#24880f1ff59d3904434e335673975fbe5aa88bc6"
+source = "git+https://github.com/kcculhwch/lovett#005057d7a57c6c9c458b1e29fe65faab50d9ef4e"
 dependencies = [
  "bincode",
  "chrono",

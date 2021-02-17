@@ -2,7 +2,7 @@ use lovett::joy_pad::*;
 use std::sync::mpsc;
 use std::sync::mpsc::Receiver;
 
-pub fn setup() -> (Receiver<Vec<ButtonAction>>, Pad) {
+pub fn setup() -> (Receiver<Vec<HIDEvent>>, Pad) {
     // setup hw buttons
     let button_initializers = vec![
         ButtonInitializer {pin: 5, code: 0, key: "b"},

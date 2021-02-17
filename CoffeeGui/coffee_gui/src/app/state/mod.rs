@@ -1,4 +1,6 @@
 pub mod mutators;
+pub mod filters;
+
 use serde::{Serialize, Deserialize};
 
 use std::collections::HashMap;
@@ -20,11 +22,12 @@ pub struct State {
     pub views: HashMap<String, Vec<GuiState>>
 }
 
-
 impl State {
     pub fn new() -> State {
         
         // setup view object handlers 
+        // handles the gui element states
+        // ie selected, clicked, released
         let mut views: HashMap<String, Vec<GuiState>> = HashMap::new();
         views.insert("bar".to_string(), vec![]);
         views.insert("boiler".to_string(), vec![]);
