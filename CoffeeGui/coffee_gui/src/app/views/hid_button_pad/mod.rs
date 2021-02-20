@@ -1,8 +1,8 @@
-use lovett::joy_pad::*;
+use lovett::hid::*;
 use std::sync::mpsc;
 use std::sync::mpsc::Receiver;
 
-pub fn setup() -> (Receiver<Vec<HIDEvent>>, Pad) {
+pub fn setup() -> (Receiver<Vec<HIDEvent>>, ButtonPad) {
     // setup hw buttons
     let button_initializers = vec![
         ButtonInitializer {pin: 5, code: 0, key: "b"},
@@ -18,7 +18,7 @@ pub fn setup() -> (Receiver<Vec<HIDEvent>>, Pad) {
     let (input_tx, joy_pad_input_rx) = mpsc::channel();
 
     // setup the input_pad
-    let pad =  match Pad::new(&button_initializers, input_tx) {
+    let pad =  match ButtonPad::new(&button_initializers, input_tx) {
         Ok(pad) => pad,
         Err(x) => panic!("Error Starting Input Pad: {}", x)
     };

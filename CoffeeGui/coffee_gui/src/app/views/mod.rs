@@ -1,8 +1,8 @@
-pub mod pad_input;
+pub mod hid_button_pad;
 
 mod info_bar;
 mod settings;
-use lovett::joy_pad::{  run_pad };
+use lovett::hid::{  run_button_pad };
 
 
 use lovett::views::*;
@@ -14,10 +14,10 @@ use std::sync::mpsc::*;
 pub fn setup(action_sender: Sender<Event>, root_state: &mut RootState) -> RootView {
 
     // setup input for views
-    let (user_input_rx, pad) = pad_input::setup();
+    let (user_input_rx, pad) = hid_button_pad::setup();
 
     // run input
-    run_pad(pad);
+    run_button_pad(pad);
 
     // decode state - since setting up views will generate state
     // strucutral changes - Adding a view
