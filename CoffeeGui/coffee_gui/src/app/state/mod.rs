@@ -3,8 +3,6 @@ pub mod filters;
 
 use serde::{Serialize, Deserialize};
 
-use std::collections::HashMap;
-use lovett::gui_tk::*;
 use std::time::{SystemTime};
 
 
@@ -19,7 +17,6 @@ pub struct State {
     pub tank: TankState,
     pub time: TimeState,
     pub settings: SettingsState,
-    pub views: HashMap<String, Vec<GuiState>>
 }
 
 impl State {
@@ -28,11 +25,6 @@ impl State {
         // setup view object handlers 
         // handles the gui element states
         // ie selected, clicked, released
-        let mut views: HashMap<String, Vec<GuiState>> = HashMap::new();
-        views.insert("bar".to_string(), vec![]);
-        views.insert("boiler".to_string(), vec![]);
-        views.insert("steamer".to_string(), vec![]);
-        views.insert("settings".to_string(), vec![]);
         
         let state = State {
             boiler: BoilerState {
@@ -51,8 +43,7 @@ impl State {
                 p: 0,
                 i: 0,
                 d: 0
-            },
-            views,
+            }
         };
         state
     }

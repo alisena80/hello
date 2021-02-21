@@ -51,7 +51,7 @@ impl App {
         let root_controller = RootController::new();
 
         // create action sender for the root_view
-        let action_sender = root_controller.get_action_sender();
+        let action_sender = root_controller.get_event_sender();
 
 
         // add our views to the root view
