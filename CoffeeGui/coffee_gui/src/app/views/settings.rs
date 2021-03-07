@@ -29,7 +29,7 @@ pub fn create(store: &mut Store) -> View {
 
     // add buttons
     let up_temp: Box<Button>  = Box::new(Button::new("^".to_string(), 0, 40, 24, 24, Event::new("[temp.click]", Some(vec!["up".to_string()])))); 
-    let dn_temp: Box<Button>  = Box::new(Button::new("∨".to_string(), 0, 65, 24, 24, Event::new("[temp.click]", Some(vec!["dn".to_string()])))); 
+    let dn_temp: Box<Button>  = Box::new(Button::new("v".to_string(), 0, 65, 24, 24, Event::new("[temp.click]", Some(vec!["dn".to_string()])))); 
     let temp_disp: Box<TextBlock> = Box::new(TextBlock::new("xxx".to_string(), 25, 40, 80, 28, Event::new("[temp]", None)));
  
     // add buttons to view
