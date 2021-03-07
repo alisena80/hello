@@ -1,4 +1,4 @@
-use lovett::state::{StateSenderFilter};
+use lovett::store::{StateSenderFilter};
 use super::{ state_decoder };
 use super::State;
 pub const BAR_VIEW_FILTER: StateSenderFilter = |old_state, new_state| {

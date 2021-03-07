@@ -1,5 +1,5 @@
-use lovett::views::*;
-use lovett::state::RootState;
+use lovett::window_viewer::*;
+use lovett::store::Store;
 use lovett::gui_tk::*;
 use super::super::state::State;
 use super::super::state::filters::*;
@@ -7,8 +7,8 @@ use super::super::state::filters::*;
 use std::sync::mpsc::*;
 
 
-pub fn create(root_state: &mut RootState) -> View {
-    // create info_bar for the root_view
+pub fn create(store: &mut Store) -> View {
+    // create info_bar for the window_viewer
     // - requires a mutation sender to send mutator signals to the state
     // - requires a ViewStateUpdater fn to process state changes
     let bar_update_fn: ViewStateUpdater = |objects, state, canvas| {
@@ -19,7 +19,7 @@ pub fn create(root_state: &mut RootState) -> View {
     };
 
     let (bar_view_state_sender, bar_view_state_receiver) = channel();
-    root_state.reg_state_sender(bar_view_state_sender, BAR_VIEW_FILTER); 
+    store.reg_state_sender(bar_view_state_sender, BAR_VIEW_FILTER); 
 
     let mut info_bar = View::new(bar_update_fn, bar_view_state_receiver);
 

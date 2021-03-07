@@ -14,7 +14,7 @@ pub fn setup() -> (Receiver<Vec<HIDEvent>>, ButtonPad) {
         ButtonInitializer {pin: 4, code:  6, key: "hat"},
     ];
 
-    //create channesl for sending raw input buttons to the root_view
+    //create channesl for sending raw input buttons to the window_viewer
     let (input_tx, joy_pad_input_rx) = mpsc::channel();
 
     // setup the input_pad

@@ -1,4 +1,4 @@
-pub mod mutators;
+pub mod reducers;
 pub mod filters;
 
 use serde::{Serialize, Deserialize};
@@ -17,6 +17,7 @@ pub struct State {
     pub tank: TankState,
     pub time: TimeState,
     pub settings: SettingsState,
+    pub schedule: Schedule,
 }
 
 impl State {
@@ -43,10 +44,17 @@ impl State {
                 p: 0,
                 i: 0,
                 d: 0
+            },
+            schedule: Schedule {
+                time: ModelState::Empty, //we want this to start running
+                boiler: ModelState::Empty,
+                tank: ModelState::Empty,
             }
         };
         state
     }
+
+
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -67,10 +75,64 @@ pub struct TimeState {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct Schedule {
+    pub time: ModelState,
+    pub boiler: ModelState,
+    pub tank: ModelState
+}
+
+impl PartialEq for Schedule {
+    fn eq(&self, other: &Self) -> bool {
+        self.time == other.time
+            && self.boiler == other.boiler
+            && self.tank == other.tank
+    }
+}
+impl Eq for Schedule {}
+
+
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub enum ModelState {
+    Empty,
+    Running,
+    Ended
+}
+
+impl PartialEq for ModelState {
+    fn eq(&self, other: &Self) -> bool {
+        if let ModelState::Empty = self {
+            match other {
+                ModelState::Empty => true,
+                _ => false
+            }
+        } else  if let ModelState::Running = self {
+            match other {
+                ModelState::Running => true,
+                _ => false
+            }
+        } else  if let ModelState::Ended = self {
+            match other {
+                ModelState::Ended => true,
+                _ => false
+            }
+        } else {
+            false
+        }
+
+    }
+}
+
+impl Eq for ModelState {}
+
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SettingsState {
     pub running: bool,
     pub p: u32,
     pub i: u32,
     pub d: u32 
 }
+
+
 

@@ -1,5 +1,5 @@
-use lovett::views::*;
-use lovett::state::RootState;
+use lovett::window_viewer::*;
+use lovett::store::Store;
 use lovett::gui_tk::*;
 use super::super::state::State;
 use super::super::state::filters::*;
@@ -7,7 +7,7 @@ use super::super::state::filters::*;
 use std::sync::mpsc::*;
 
 
-pub fn create(root_state: &mut RootState) -> View {
+pub fn create(store: &mut Store) -> View {
 
 
     // create the settings view
@@ -23,7 +23,7 @@ pub fn create(root_state: &mut RootState) -> View {
 
 
     let (state_tx, state_rx) = channel();
-    root_state.reg_state_sender(state_tx, SETTINGS_VIEW_FILTER);
+    store.reg_state_sender(state_tx, SETTINGS_VIEW_FILTER);
 
     let mut settings_view = View::new( settings_update_fn, state_rx);
 
