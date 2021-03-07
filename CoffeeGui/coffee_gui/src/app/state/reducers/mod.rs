@@ -45,7 +45,7 @@ pub fn setup(store: &mut Store) {
         };
 
         store.reducers.insert("[time.current_time]", time_updater);
-        store.reducers.insert("[schedule.upade_thread]", thread_updater);
+        store.reducers.insert("[schedule.update_thread]", thread_updater);
 
 
 
