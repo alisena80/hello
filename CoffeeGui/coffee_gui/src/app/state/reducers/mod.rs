@@ -44,6 +44,7 @@ pub fn setup(store: &mut Store) {
             }
         };
         let set_target_temp: Reducer = |state, action| {
+            debug!("update target temp");
             let decoded_state = state_decoder(state);
             if let Some(values) = action.values {
                 match &values[0][..] {
