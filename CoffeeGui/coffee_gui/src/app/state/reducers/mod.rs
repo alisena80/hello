@@ -1,6 +1,6 @@
 use lovett::store::*;
 use super::*;
-
+use log::*;
 
 pub fn setup(store: &mut Store) {
         // create the mutator handlers
@@ -19,6 +19,7 @@ pub fn setup(store: &mut Store) {
         };
 
         let thread_updater: Reducer = |state, action| {
+            debug!("Call thread updater");
             let decoded_state = state_decoder(state);
             if let Some(values) = action.values {
                 let model_state: ModelState = match &values[1][..] {

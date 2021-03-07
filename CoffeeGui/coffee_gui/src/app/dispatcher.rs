@@ -1,7 +1,7 @@
 use lovett::dispatcher::{Dispatch};
 use lovett::gui_tk::Event;
 use lovett::store::Action;
-
+use log::*;
 pub struct DispatchHandler {
     
 
@@ -16,6 +16,7 @@ impl Dispatch for DispatchHandler {
             },
             
             "[schedule.update_thread]" => {
+                debug!("signal to schdule");
                 Some(Action::new("[schedule.update_thread]", event.values))
             },
 
