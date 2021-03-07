@@ -15,8 +15,8 @@ pub fn create(store: &mut Store) -> View {
     let settings_update_fn: ViewStateUpdater = | objects, state, canvas | {
         let decoded_state: State = super::super::state_decoder(state);
         // update all of this views things based on the value of state
-        if &decoded_state.time.current_time[..] != objects[0].get_text() {
-            objects[0].set_text(decoded_state.time.current_time.clone(), canvas);
+        if &decoded_state.settings.target_temp.to_string()[..] != objects[2].get_text() {
+            objects[2].set_text(decoded_state.settings.target_temp.to_string(), canvas);
         }
 
     };
@@ -28,17 +28,14 @@ pub fn create(store: &mut Store) -> View {
     let mut settings_view = View::new( settings_update_fn, state_rx);
 
     // add buttons
-    let button: Box<Button> = Box::new(Button::new("00:00:00 XX".to_string(), 0, 30, 200, 32, Event::new("Time Click", None))); 
-    let button2: Box<Button> = Box::new(Button::new("X".to_string(), 0, 90, 32, 32, Event::new("Time Click", None))); 
-    let button3: Box<Button> = Box::new(Button::new("Y".to_string(), 100, 150, 32, 32, Event::new("Time Click", None))); 
-    let button4: Box<Button> = Box::new(Button::new("Z".to_string(), 0, 150, 32, 32, Event::new("Time Click", None))); 
-   
+    let up_temp: Box<Button>  = Box::new(Button::new("^".to_string(), 0, 40, 24, 24, Event::new("[temp.click]", Some(vec!["up".to_string()])))); 
+    let dn_temp: Box<Button>  = Box::new(Button::new("∨".to_string(), 0, 65, 24, 24, Event::new("[temp.click]", Some(vec!["dn".to_string()])))); 
+    let temp_disp: Box<TextBlock> = Box::new(TextBlock::new("xxx".to_string(), 25, 40, 80, 28, Event::new("[temp]", None)));
+ 
     // add buttons to view
-    settings_view.add_object(button, 0, 0);
-    settings_view.add_object(button2, 1, 0);
-    settings_view.add_object(button3, 2, 2);
-    settings_view.add_object(button4, 2, 0);
-
+    settings_view.add_object(up_temp, 0, 0);
+    settings_view.add_object(dn_temp, 1, 0);
+    settings_view.add_static_object(temp_disp);
 
 
     settings_view

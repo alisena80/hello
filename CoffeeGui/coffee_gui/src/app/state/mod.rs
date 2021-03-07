@@ -41,6 +41,7 @@ impl State {
             },
             settings: SettingsState {
                 running: false,
+                target_temp: 200,
                 p: 0,
                 i: 0,
                 d: 0
@@ -129,6 +130,7 @@ impl Eq for ModelState {}
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SettingsState {
     pub running: bool,
+    pub target_temp: u32,
     pub p: u32,
     pub i: u32,
     pub d: u32 

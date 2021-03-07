@@ -26,13 +26,8 @@ impl Dispatch for DispatchHandler {
                 None
             },
 
-            "[set_temp_up]" => {
-                None
-            },
-
-            "[set_temp_down]" => {
-                None
-
+            "[temp.click]" => {
+                Some(Action::new("temp.click", event.values))
             },
 
             "[set_p_up]" => {

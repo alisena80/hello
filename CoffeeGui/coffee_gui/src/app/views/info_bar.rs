@@ -24,7 +24,7 @@ pub fn create(store: &mut Store) -> View {
     let mut info_bar = View::new(bar_update_fn, bar_view_state_receiver);
 
     // register gui elements for the info bar
-    let bar_clock: Box<TextBlock> = Box::new(TextBlock::new("00:00:00 XX".to_string(), 4, 0, 140, 28, Event::new("Time Click", None)));
+    let bar_clock: Box<TextBlock> = Box::new(TextBlock::new("00:00:00 XX".to_string(), 4, 0, 140, 28, Event::new("", None)));
     let top_bar_block: Box<Block> = Box::new(Block::new(0,0, 240, 30, Event::new("", None)));
     // add the button state tracker
     // add it to the view
