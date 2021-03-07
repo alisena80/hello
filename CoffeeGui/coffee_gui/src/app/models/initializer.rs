@@ -2,12 +2,12 @@ use lovett::model_scheduler::{ModelScheduler,  Schedule, Model};
 use super::time::TimeModel;
 use std::sync::mpsc::{Sender, channel};
 use lovett::gui_tk::Event;
-use lovett::store::{Store, StateSenderFilter};
+use lovett::store::{Store };
 use super::super::{ state_decoder };
 use std::thread::JoinHandle;
 use std::thread;
 use super::super::state::ModelState;
-
+use super::super::state::filters::SCHEDULE_FILTER;
 pub fn setup(event_tx: Sender<Event>, store: &mut Store) -> ModelScheduler{
 
         // Initialize the ModelScheduler
@@ -24,13 +24,9 @@ pub fn setup(event_tx: Sender<Event>, store: &mut Store) -> ModelScheduler{
         };
 
         let (state_tx, state_rx) = channel();
-        let state_sender_filter: StateSenderFilter = |vec1, vec2| -> bool {
-            let old_state = state_decoder(vec1);
-            let new_state = state_decoder(vec2);
-            old_state.schedule != new_state.schedule
-        };
 
-        store.reg_state_sender(state_tx, state_sender_filter);
+
+        store.reg_state_sender(state_tx, SCHEDULE_FILTER); //state_sender_filter);
         let mut model_scheduler = ModelScheduler::new(state_rx, schedule);
 
 

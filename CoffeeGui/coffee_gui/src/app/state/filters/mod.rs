@@ -16,6 +16,14 @@ pub const SETTINGS_VIEW_FILTER: StateSenderFilter = |old_state, new_state| {
 };
 
 
+pub const SCHEDULE_FILTER: StateSenderFilter = |vec1, vec2| -> bool {
+            let old_state = state_decoder(vec1);
+            let new_state = state_decoder(vec2);
+            old_state.schedule != new_state.schedule
+        };
+
+
+
 fn decode_states(old_state: &[u8], new_state: &[u8]) -> (State, State) {
     (state_decoder(old_state), state_decoder(new_state))
 }

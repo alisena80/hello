@@ -18,7 +18,6 @@ pub fn create(store: &mut Store) -> View {
         if &decoded_state.settings.target_temp.to_string()[..] != objects[2].get_text() {
             objects[2].set_text(decoded_state.settings.target_temp.to_string(), canvas);
         }
-
     };
 
 
