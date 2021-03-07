@@ -3,7 +3,7 @@ use lovett::store::Store;
 use lovett::gui_tk::*;
 use super::super::state::State;
 use super::super::state::filters::*;
-
+use log::*;
 use std::sync::mpsc::*;
 
 
@@ -16,7 +16,10 @@ pub fn create(store: &mut Store) -> View {
         let decoded_state: State = super::super::state_decoder(state);
         // update all of this views things based on the value of state
         if &decoded_state.settings.target_temp.to_string()[..] != objects[2].get_text() {
+            debug!("change to to temp setting!");
             objects[2].set_text(decoded_state.settings.target_temp.to_string(), canvas);
+        } else {
+            debug!("No change to temp setting!");
         }
     };
 
