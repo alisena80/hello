@@ -30,15 +30,16 @@ pub fn create(store: &mut Store) -> View {
     let mut settings_view = View::new( settings_update_fn, state_rx);
 
     // add buttons
-    let up_temp: Box<Button>  = Box::new(Button::new("^".to_string(), 0, 40, 24, 24, Event::new("[temp.click]", Some(vec!["up".to_string()])))); 
-    let dn_temp: Box<Button>  = Box::new(Button::new("v".to_string(), 0, 65, 24, 24, Event::new("[temp.click]", Some(vec!["dn".to_string()])))); 
-    let temp_disp: Box<TextBlock> = Box::new(TextBlock::new("xxx".to_string(), 25, 40, 80, 28, Event::new("[temp]", None)));
- 
+    let up_temp: Box<Button>  = Box::new(Button::new("▲".to_string(), 0, 40, 24, 24, Event::new("[temp.click]", Some(vec!["up".to_string()])))); 
+    let dn_temp: Box<Button>  = Box::new(Button::new("▼".to_string(), 0, 65, 24, 24, Event::new("[temp.click]", Some(vec!["dn".to_string()])))); 
+    let temp_disp: Box<TextBlock> = Box::new(TextBlock::new("200".to_string(), 25, 40, 80, 40, Event::new("[temp]", None)));
+    let temp_label: Box<TextBlock> = Box::new(TextBlock::new("°F : Target Temp" 25, 120, 100, 40, Event::new("[temp_label]", None)));
+
     // add buttons to view
     settings_view.add_object(up_temp, 0, 0);
     settings_view.add_object(dn_temp, 1, 0);
     settings_view.add_static_object(temp_disp);
-
+    settings_view.add_static_object(temp_label);
 
     settings_view
 }
