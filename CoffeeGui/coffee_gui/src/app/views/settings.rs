@@ -79,21 +79,21 @@ pub fn create(store: &mut Store) -> View {
 
 
     // add buttons to view
-    settings_view.add_object(up_p, 0, 0);
-    settings_view.add_object(dn_p, 1, 0);
+    settings_view.add_object(up_p, 2, 0);
+    settings_view.add_object(dn_p, 3, 0);
     settings_view.add_static_object(p_disp);
     settings_view.add_static_object(p_label);
 
 
     // add buttons to view
-    settings_view.add_object(up_i, 0, 0);
-    settings_view.add_object(dn_i, 1, 0);
+    settings_view.add_object(up_i, 4, 0);
+    settings_view.add_object(dn_i, 5, 0);
     settings_view.add_static_object(i_disp);
     settings_view.add_static_object(i_label);
 
     // add buttons to view
-    settings_view.add_object(up_d, 0, 0);
-    settings_view.add_object(dn_d, 1, 0);
+    settings_view.add_object(up_d, 6, 0);
+    settings_view.add_object(dn_d, 7, 0);
     settings_view.add_static_object(d_disp);
     settings_view.add_static_object(d_label);
 
