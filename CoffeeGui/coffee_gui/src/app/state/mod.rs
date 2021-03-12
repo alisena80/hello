@@ -42,9 +42,9 @@ impl State {
             settings: SettingsState {
                 running: false,
                 target_temp: 200,
-                p: 0.0,
-                i: 0.0,
-                d: 0.0
+                p: 15.0,
+                i: 3.0,
+                d: 3.0
             },
             schedule: Schedule {
                 time: ModelState::Empty, //we want this to start running
