@@ -10,7 +10,7 @@ use std::sync::mpsc::*;
 fn format_dec(num: i32) -> String {
     let num_vec = &num.to_string()[..];
     let mut output: String = String::new();
-    output.push_str(&num_vec[0..num_vec.len()]);
+    output.push_str(&num_vec[0..(num_vec.len() - 1)]);
     output.push('.');
     output.push_str(&num_vec[(num_vec.len() - 1)..(num_vec.len())]);
     output
