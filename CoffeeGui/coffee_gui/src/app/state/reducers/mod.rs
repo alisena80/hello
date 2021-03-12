@@ -69,9 +69,93 @@ pub fn setup(store: &mut Store) {
                 state.to_vec()
             }
         };
+
+        let set_p: Reducer = |state, action| {
+            let decoded_state = state_decoder(state);
+            if let Some(values) = action.values {
+                match &values[0][..] {
+                    "up" => {
+                        let new_state = State {
+                            settings: SettingsState { p: decoded_state.settings.p + 0.1, ..decoded_state.settings},
+                            ..decoded_state
+                        };
+                        bincode::serialize(&new_state).unwrap()
+                    },
+                    "dn" => {
+                        let new_state = State {
+                            settings: SettingsState { p: decoded_state.settings.p - 0.1, ..decoded_state.settings},
+                            ..decoded_state
+                        };
+                        bincode::serialize(&new_state).unwrap()
+                    },
+                    _ => state.to_vec()
+                }
+            
+            } else {
+                state.to_vec()
+            }
+        };
+
+        let set_i: Reducer = |state, action| {
+            let decoded_state = state_decoder(state);
+            if let Some(values) = action.values {
+                match &values[0][..] {
+                    "up" => {
+                        let new_state = State {
+                            settings: SettingsState { i: decoded_state.settings.i + 0.1, ..decoded_state.settings},
+                            ..decoded_state
+                        };
+                        bincode::serialize(&new_state).unwrap()
+                    },
+                    "dn" => {
+                        let new_state = State {
+                            settings: SettingsState { i: decoded_state.settings.i - 0.1, ..decoded_state.settings},
+                            ..decoded_state
+                        };
+                        bincode::serialize(&new_state).unwrap()
+                    },
+                    _ => state.to_vec()
+                }
+            
+            } else {
+                state.to_vec()
+            }
+        };
+
+        let set_d: Reducer = |state, action| {
+            let decoded_state = state_decoder(state);
+            if let Some(values) = action.values {
+                match &values[0][..] {
+                    "up" => {
+                        let new_state = State {
+                            settings: SettingsState { d: decoded_state.settings.d + 0.1, ..decoded_state.settings},
+                            ..decoded_state
+                        };
+                        bincode::serialize(&new_state).unwrap()
+                    },
+                    "dn" => {
+                        let new_state = State {
+                            settings: SettingsState { d: decoded_state.settings.d - 0.1, ..decoded_state.settings},
+                            ..decoded_state
+                        };
+                        bincode::serialize(&new_state).unwrap()
+                    },
+                    _ => state.to_vec()
+                }
+            
+            } else {
+                state.to_vec()
+            }
+        };
+
+
+
         store.reducers.insert("[time.current_time]", time_updater);
         store.reducers.insert("[schedule.update_thread]", thread_updater);
         store.reducers.insert("[temp.click]", set_target_temp);
+        store.reducers.insert("[p.click]", set_p);
+        store.reducers.insert("[i.click]", set_i);
+        store.reducers.insert("[d.click]", set_d);
 
 
 

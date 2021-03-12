@@ -30,9 +30,18 @@ impl Dispatch for DispatchHandler {
                 Some(Action::new("[temp.click]", event.values))
             },
 
-            "[set_p_up]" => {
-                None
+            "[p.click]" => {
+                 Some(Action::new("[p.click]", event.values))
             }
+
+            "[i.click]" => {
+                 Some(Action::new("[i.click]", event.values))
+            }
+
+            "[d.click]" => {
+                 Some(Action::new("[d.click]", event.values))
+            }
+
 
             "[set_p_down]" => {
                 None
