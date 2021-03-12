@@ -6,6 +6,15 @@ use super::super::state::filters::*;
 //use log::*;
 use std::sync::mpsc::*;
 
+// we use 10x ints to have better precision than fpu
+fn format_dec(num: i32) -> String {
+    let num_vec = &num.to_string()[..];
+    let mut output: String = String::new();
+    output.push_str(&num_vec[0..num_vec.len()]);
+    output.push('.');
+    output.push_str(&num_vec[(num_vec.len() - 1)..(num_vec.len())]);
+    output
+}
 
 pub fn create(store: &mut Store) -> View {
 
@@ -20,20 +29,24 @@ pub fn create(store: &mut Store) -> View {
         } else {
         }
 
-        if &decoded_state.settings.p.to_string()[..] != objects[6].get_text() {
-            objects[6].set_text(decoded_state.settings.p.to_string(), canvas);
+        let p_disp = format_dec(decoded_state.settings.p);
+        if &p_disp[..] != objects[6].get_text() {
+            objects[6].set_text(p_disp, canvas);
         } else {
         }
 
-        if &decoded_state.settings.i.to_string()[..] != objects[10].get_text() {
-            objects[10].set_text(decoded_state.settings.i.to_string(), canvas);
+        let i_disp = format_dec(decoded_state.settings.i);
+        if &i_disp[..] != objects[10].get_text() {
+            objects[10].set_text(i_disp, canvas);
         } else {
         }
 
-        if &decoded_state.settings.d.to_string()[..] != objects[14].get_text() {
-            objects[14].set_text(decoded_state.settings.d.to_string(), canvas);
+        let d_disp = format_dec(decoded_state.settings.d);
+        if &d_disp[..] != objects[14].get_text() {
+            objects[14].set_text(d_disp, canvas);
         } else {
         }
+
 
     };
 

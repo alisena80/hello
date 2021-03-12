@@ -76,14 +76,14 @@ pub fn setup(store: &mut Store) {
                 match &values[0][..] {
                     "up" => {
                         let new_state = State {
-                            settings: SettingsState { p: decoded_state.settings.p + 0.1, ..decoded_state.settings},
+                            settings: SettingsState { p: decoded_state.settings.p + 1, ..decoded_state.settings},
                             ..decoded_state
                         };
                         bincode::serialize(&new_state).unwrap()
                     },
                     "dn" => {
                         let new_state = State {
-                            settings: SettingsState { p: decoded_state.settings.p - 0.1, ..decoded_state.settings},
+                            settings: SettingsState { p: decoded_state.settings.p - 1, ..decoded_state.settings},
                             ..decoded_state
                         };
                         bincode::serialize(&new_state).unwrap()
@@ -102,14 +102,14 @@ pub fn setup(store: &mut Store) {
                 match &values[0][..] {
                     "up" => {
                         let new_state = State {
-                            settings: SettingsState { i: decoded_state.settings.i + 0.1, ..decoded_state.settings},
+                            settings: SettingsState { i: decoded_state.settings.i + 1, ..decoded_state.settings},
                             ..decoded_state
                         };
                         bincode::serialize(&new_state).unwrap()
                     },
                     "dn" => {
                         let new_state = State {
-                            settings: SettingsState { i: decoded_state.settings.i - 0.1, ..decoded_state.settings},
+                            settings: SettingsState { i: decoded_state.settings.i - 1, ..decoded_state.settings},
                             ..decoded_state
                         };
                         bincode::serialize(&new_state).unwrap()
@@ -128,14 +128,14 @@ pub fn setup(store: &mut Store) {
                 match &values[0][..] {
                     "up" => {
                         let new_state = State {
-                            settings: SettingsState { d: decoded_state.settings.d + 0.1, ..decoded_state.settings},
+                            settings: SettingsState { d: decoded_state.settings.d + 1, ..decoded_state.settings},
                             ..decoded_state
                         };
                         bincode::serialize(&new_state).unwrap()
                     },
                     "dn" => {
                         let new_state = State {
-                            settings: SettingsState { d: decoded_state.settings.d - 0.1, ..decoded_state.settings},
+                            settings: SettingsState { d: decoded_state.settings.d - 1, ..decoded_state.settings},
                             ..decoded_state
                         };
                         bincode::serialize(&new_state).unwrap()

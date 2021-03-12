@@ -42,9 +42,9 @@ impl State {
             settings: SettingsState {
                 running: false,
                 target_temp: 200,
-                p: 15.0,
-                i: 3.0,
-                d: 3.0
+                p: 150,
+                i: 30,
+                d: 30
             },
             schedule: Schedule {
                 time: ModelState::Empty, //we want this to start running
@@ -130,10 +130,10 @@ impl Eq for ModelState {}
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SettingsState {
     pub running: bool,
-    pub target_temp: u32,
-    pub p: f32,
-    pub i: f32,
-    pub d: f32 
+    pub target_temp: i32,
+    pub p: i32,
+    pub i: i32,
+    pub d: i32 
 }
 
 
