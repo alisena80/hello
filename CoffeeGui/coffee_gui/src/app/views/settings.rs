@@ -59,8 +59,8 @@ pub fn create(store: &mut Store) -> View {
     let mut settings_view = View::new( settings_update_fn, state_rx);
 
     // add buttons
-    let up_temp: Box<Button>            = Box::new(Button::new("▲".to_string(), 0, 36, 25, 16, Event::new("[temp.click]", Some(vec!["up".to_string()])), &CONFIG)); 
-    let dn_temp: Box<Button>            = Box::new(Button::new("▼".to_string(), 0, 54, 25, 16, Event::new("[temp.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
+    let up_temp: Box<Button>            = Box::new(Button::new("▲".to_string(), 0, 36, 24, 16, Event::new("[temp.click]", Some(vec!["up".to_string()])), &CONFIG)); 
+    let dn_temp: Box<Button>            = Box::new(Button::new("▼".to_string(), 0, 54, 24, 16, Event::new("[temp.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
     let temp_disp: Box<TextBlock>       = Box::new(TextBlock::new("200".to_string(), 25, 45, 80, 32, Event::new("[temp]", None), &CONFIG));
     let temp_label: Box<TextBlock>      = Box::new(TextBlock::new("°F : Target".to_string(), 90, 45, 100, 32, Event::new("[temp_label]", None), &CONFIG));
 
