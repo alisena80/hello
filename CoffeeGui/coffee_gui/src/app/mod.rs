@@ -26,11 +26,11 @@ use lovett::fb::Color;
 
                 Color::new(78, 156, 183),
                 Color::new(255, 255, 255),
-                Color::new(90, 130, 130),
+                Color::new(90, 150, 150),
 
                 Color::new(160, 255, 255),
                 Color::new(0, 0, 0),
-                Color::new(120, 200, 200),
+                Color::new(150, 250, 250),
         ),
 
         "./assets/fonts/Nanum_Gothic/NanumGothic-Regular.ttf");
