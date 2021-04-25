@@ -4,11 +4,9 @@ use lovett::gui_tk::*;
 use super::super::state::State;
 use super::super::state::filters::*;
 use std::sync::mpsc::*;
-use glyph_brush_layout::*;
-use ab_glyph::*;
+use super::super::CONFIG;
 
-
-pub fn create(store: &mut Store, font: &'static FontVec) -> View {
+pub fn create(store: &mut Store) -> View {
     // create info_bar for the window_viewer
     // - requires a mutation sender to send mutator signals to the state
     // - requires a ViewStateUpdater fn to process state changes
@@ -25,8 +23,8 @@ pub fn create(store: &mut Store, font: &'static FontVec) -> View {
     let mut info_bar = View::new(bar_update_fn, bar_view_state_receiver);
 
     // register gui elements for the info bar
-    let bar_clock: Box<TextBlock> = Box::new(TextBlock::new("00:00:00 XX".to_string(), 4, 0, 140, 28, Event::new("", None), font));
-    let top_bar_block: Box<Block> = Box::new(Block::new(0,0, 240, 30, Event::new("", None)));
+    let bar_clock: Box<TextBlock> = Box::new(TextBlock::new("00:00:00 XX".to_string(), 4, 0, 140, 28, Event::new("", None), &CONFIG));
+    let top_bar_block: Box<Block> = Box::new(Block::new(0,0, 240, 30, Event::new("", None), &CONFIG));
     // add the button state tracker
     // add it to the view
 

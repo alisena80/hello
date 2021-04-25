@@ -14,7 +14,32 @@ mod views;
 mod dispatcher;
 use dispatcher::DispatchHandler;
 
+use lovett::gui_tk::{ GuiConfig, Palette};
+use lovett::fb::Color;
 
+    lazy_static! {
+        pub static ref CONFIG: GuiConfig = GuiConfig::new(
+             Palette::new(
+                Color::new(78, 156, 183),
+                Color::new(255, 255, 255),
+                Color::new(30, 50, 50),
+
+                Color::new(78, 156, 183),
+                Color::new(255, 255, 255),
+                Color::new(90, 130, 130),
+
+                Color::new(160, 255, 255),
+                Color::new(0, 0, 0),
+                Color::new(120, 200, 200),
+        ),
+
+        "./assets/fonts/Nanum_Gothic/NanumGothic-Regular.ttf");
+    }
+
+
+
+/*
+*/
 
 
 pub fn run_app(app: App) {

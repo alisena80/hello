@@ -9,14 +9,8 @@ use lovett::window_viewer::*;
 use lovett::gui_tk::*;
 use lovett::store::Store;
 use std::sync::mpsc::*;
-use glyph_brush_layout::*;
-use ab_glyph::*;
-
 
 pub fn setup(event_sender: Sender<Event>, store: &mut Store) -> WindowViewer {
-    lazy_static! {
-        static ref FONT: FontVec = lovett::canvas::font::get_font("./assets/fonts/Nanum_Gothic/NanumGothic-Regular.ttf");
-    }
     // setup input for views
     let (user_input_rx, pad) = hid_button_pad::setup();
 
@@ -28,14 +22,14 @@ pub fn setup(event_sender: Sender<Event>, store: &mut Store) -> WindowViewer {
 
 
     // create the info bar
-    let info_bar = info_bar::create(store, &FONT);
+    let info_bar = info_bar::create(store);
 
     // create the window_viewer
     let mut window_viewer = WindowViewer::new("/dev/fb1", user_input_rx, event_sender, info_bar);
     
 
     // create the settings voew
-    let settings_view = settings::create(store, &FONT);
+    let settings_view = settings::create(store);
 
     // register the view and set it active
     window_viewer.add_view(settings_view);
