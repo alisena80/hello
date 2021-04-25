@@ -6,7 +6,6 @@ use lovett::gui_tk::Event;
 mod state;
 use state::*;
 
-
 mod models;
 use models::initializer::setup as model_setup;
 
@@ -14,6 +13,9 @@ mod views;
 
 mod dispatcher;
 use dispatcher::DispatchHandler;
+
+
+
 
 pub fn run_app(app: App) {
     let event_sender = app.dispatcher.get_event_sender();
