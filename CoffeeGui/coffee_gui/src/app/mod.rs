@@ -22,7 +22,7 @@ use lovett::fb::Color;
              Palette::new(
                 Color::new(78, 156, 183),
                 Color::new(255, 255, 255),
-                Color::new(30, 50, 50),
+                Color::new(15, 25, 25),
 
                 Color::new(78, 156, 183),
                 Color::new(255, 255, 255),
