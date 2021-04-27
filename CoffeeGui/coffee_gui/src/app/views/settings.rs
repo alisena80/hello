@@ -80,7 +80,7 @@ pub fn create(store: &mut Store) -> View {
 
     // add d
     let up_d: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 162, 31, 16, 9, 1, 15, Event::new("[d.click]", Some(vec!["up".to_string()])), &CONFIG)); 
-    let dn_d: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 170, 31, 16, 9, -1, 15, Event::new("[d.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
+    let dn_d: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 180, 31, 16, 9, -1, 15, Event::new("[d.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
     let d_disp: Box<TextBlock>          = Box::new(TextBlock::new("3.0".to_string(), 25, 162, 80, 32, Event::new("[d]", None), &CONFIG));
     let d_label: Box<TextBlock>         = Box::new(TextBlock::new(" : D".to_string(), 90, 162, 100, 32, Event::new("[d_label]", None), &CONFIG));
 
