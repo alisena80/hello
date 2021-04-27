@@ -59,7 +59,7 @@ pub fn create(store: &mut Store) -> View {
     let mut settings_view = View::new( settings_update_fn, state_rx);
 
     // add label
-    let page_label: Box<TextBlock>       = Box::new(TextBlock::new("Brew Settings".to_string(), 32, 36, 224, 16, Event::new("[settings_label]", None), &CONFIG));
+    let page_label: Box<TextBlock>       = Box::new(TextBlock::new("Brew Settings".to_string(), 32, 36, 186, 20, Event::new("[settings_label]", None), &CONFIG));
 
     // add buttons
     let up_temp: Box<Button>            = Box::new(Button::new("▲".to_string(), 0, 52, 31, 16, 9, 1, 15, Event::new("[temp.click]", Some(vec!["up".to_string()])), &CONFIG)); 
