@@ -71,16 +71,16 @@ pub fn create(store: &mut Store) -> View {
     let p_label: Box<TextBlock>         = Box::new(TextBlock::new(" : P".to_string(), 90, 75, 100, 32, Event::new("[p_label]", None), &CONFIG));
 
     // add i
-    let up_i: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 140, 31, 16, 9, 1, 15, Event::new("[i.click]", Some(vec!["up".to_string()])), &CONFIG)); 
-    let dn_i: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 161, 31, 16, 9, -1, 15, Event::new("[i.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
+    let up_i: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 130, 31, 16, 9, 1, 15, Event::new("[i.click]", Some(vec!["up".to_string()])), &CONFIG)); 
+    let dn_i: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 148, 31, 16, 9, -1, 15, Event::new("[i.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
     let i_disp: Box<TextBlock>          = Box::new(TextBlock::new("3.0".to_string(), 25, 145, 80, 32, Event::new("[i]", None), &CONFIG));
     let i_label: Box<TextBlock>         = Box::new(TextBlock::new(" : I".to_string(), 90, 145, 100, 32, Event::new("[i_label]", None), &CONFIG));
 
 
 
     // add d
-    let up_d: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 190, 31, 16, 9, 1, 15, Event::new("[d.click]", Some(vec!["up".to_string()])), &CONFIG)); 
-    let dn_d: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 211, 31, 16, 9, -1, 15, Event::new("[d.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
+    let up_d: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 172, 31, 16, 9, 1, 15, Event::new("[d.click]", Some(vec!["up".to_string()])), &CONFIG)); 
+    let dn_d: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 190, 31, 16, 9, -1, 15, Event::new("[d.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
     let d_disp: Box<TextBlock>          = Box::new(TextBlock::new("3.0".to_string(), 25, 195, 80, 32, Event::new("[d]", None), &CONFIG));
     let d_label: Box<TextBlock>         = Box::new(TextBlock::new(" : D".to_string(), 90, 195, 100, 32, Event::new("[d_label]", None), &CONFIG));
 
