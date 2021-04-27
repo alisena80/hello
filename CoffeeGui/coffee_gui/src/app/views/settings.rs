@@ -65,7 +65,7 @@ pub fn create(store: &mut Store) -> View {
     let temp_label: Box<TextBlock>      = Box::new(TextBlock::new("°F : Target".to_string(), 90, 35, 100, 32, Event::new("[temp_label]", None), &CONFIG));
 
     // add p 
-    let up_p: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 70, 31, 16, 9, 1, 15, Event::new("[p.click]", Some(vec!["up".to_string()])), &CONFIG)); 
+    let up_p: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 78, 31, 16, 9, 1, 15, Event::new("[p.click]", Some(vec!["up".to_string()])), &CONFIG)); 
     let dn_p: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 96, 31, 16, 9, -1, 15, Event::new("[p.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
     let p_disp: Box<TextBlock>          = Box::new(TextBlock::new("15.0".to_string(), 25, 75, 80, 32, Event::new("[p]", None), &CONFIG));
     let p_label: Box<TextBlock>         = Box::new(TextBlock::new(" : P".to_string(), 90, 75, 100, 32, Event::new("[p_label]", None), &CONFIG));
