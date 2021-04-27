@@ -61,14 +61,14 @@ pub fn create(store: &mut Store) -> View {
     // add buttons
     let up_temp: Box<Button>            = Box::new(Button::new("▲".to_string(), 0, 36, 31, 16, 9, 1, 15, Event::new("[temp.click]", Some(vec!["up".to_string()])), &CONFIG)); 
     let dn_temp: Box<Button>            = Box::new(Button::new("▼".to_string(), 0, 54, 31, 16, 9, -1, 15, Event::new("[temp.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
-    let temp_disp: Box<TextBlock>       = Box::new(TextBlock::new("200".to_string(), 25, 45, 80, 32, Event::new("[temp]", None), &CONFIG));
-    let temp_label: Box<TextBlock>      = Box::new(TextBlock::new("°F : Target".to_string(), 90, 45, 100, 32, Event::new("[temp_label]", None), &CONFIG));
+    let temp_disp: Box<TextBlock>       = Box::new(TextBlock::new("200".to_string(), 25, 35, 80, 32, Event::new("[temp]", None), &CONFIG));
+    let temp_label: Box<TextBlock>      = Box::new(TextBlock::new("°F : Target".to_string(), 90, 35, 100, 32, Event::new("[temp_label]", None), &CONFIG));
 
     // add p 
-    let up_p: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 90, 31, 16, 9, 1, 15, Event::new("[p.click]", Some(vec!["up".to_string()])), &CONFIG)); 
-    let dn_p: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 111, 31, 16, 9, -1, 15, Event::new("[p.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
-    let p_disp: Box<TextBlock>          = Box::new(TextBlock::new("15.0".to_string(), 25, 95, 80, 32, Event::new("[p]", None), &CONFIG));
-    let p_label: Box<TextBlock>         = Box::new(TextBlock::new(" : P".to_string(), 90, 95, 100, 32, Event::new("[p_label]", None), &CONFIG));
+    let up_p: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 70, 31, 16, 9, 1, 15, Event::new("[p.click]", Some(vec!["up".to_string()])), &CONFIG)); 
+    let dn_p: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 96, 31, 16, 9, -1, 15, Event::new("[p.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
+    let p_disp: Box<TextBlock>          = Box::new(TextBlock::new("15.0".to_string(), 25, 75, 80, 32, Event::new("[p]", None), &CONFIG));
+    let p_label: Box<TextBlock>         = Box::new(TextBlock::new(" : P".to_string(), 90, 75, 100, 32, Event::new("[p_label]", None), &CONFIG));
 
     // add i
     let up_i: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 140, 31, 16, 9, 1, 15, Event::new("[i.click]", Some(vec!["up".to_string()])), &CONFIG)); 
