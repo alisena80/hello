@@ -79,15 +79,12 @@ pub fn create(store: &mut Store) -> View {
     let i_disp: Box<TextBlock>          = Box::new(TextBlock::new("3.0".to_string(), 25, 146, 80, 32, Event::new("[i]", None), &CONFIG));
     let i_label: Box<TextBlock>         = Box::new(TextBlock::new(" : I".to_string(), 90, 146, 100, 32, Event::new("[i_label]", None), &CONFIG));
 
-
-
     // add d
-    let up_d: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 178, 31, 16, 9, 1, 15, Event::new("[d.click]", Some(vec!["up".to_string()])), &CONFIG)); 
-    let dn_d: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 196, 31, 16, 9, -1, 15, Event::new("[d.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
-    let d_disp: Box<TextBlock>          = Box::new(TextBlock::new("3.0".to_string(), 25, 178, 80, 32, Event::new("[d]", None), &CONFIG));
-    let d_label: Box<TextBlock>         = Box::new(TextBlock::new(" : D".to_string(), 90, 178, 100, 32, Event::new("[d_label]", None), &CONFIG));
+    let up_d: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 188, 31, 16, 9, 1, 15, Event::new("[d.click]", Some(vec!["up".to_string()])), &CONFIG)); 
+    let dn_d: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 206, 31, 16, 9, -1, 15, Event::new("[d.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
+    let d_disp: Box<TextBlock>          = Box::new(TextBlock::new("3.0".to_string(), 25, 188, 80, 32, Event::new("[d]", None), &CONFIG));
+    let d_label: Box<TextBlock>         = Box::new(TextBlock::new(" : D".to_string(), 90, 188, 100, 32, Event::new("[d_label]", None), &CONFIG));
 
-    settings_view.add_static_object(page_label);
 
 
     // add buttons to view
@@ -117,5 +114,6 @@ pub fn create(store: &mut Store) -> View {
     settings_view.add_static_object(d_label);
 
 
+    settings_view.add_static_object(page_label);
     settings_view
 }
