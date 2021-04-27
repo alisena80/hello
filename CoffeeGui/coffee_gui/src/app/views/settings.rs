@@ -58,32 +58,36 @@ pub fn create(store: &mut Store) -> View {
 
     let mut settings_view = View::new( settings_update_fn, state_rx);
 
+    // add label
+    let page_label: Box<TextBlock>       = Box::new(TextBlock::new("Brew Settings".to_string(), 32, 36, 224, 16, Event::new("[settings_label]", None), &CONFIG));
+
     // add buttons
-    let up_temp: Box<Button>            = Box::new(Button::new("▲".to_string(), 0, 36, 31, 16, 9, 1, 15, Event::new("[temp.click]", Some(vec!["up".to_string()])), &CONFIG)); 
-    let dn_temp: Box<Button>            = Box::new(Button::new("▼".to_string(), 0, 54, 31, 16, 9, -1, 15, Event::new("[temp.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
-    let temp_disp: Box<TextBlock>       = Box::new(TextBlock::new("200".to_string(), 25, 35, 80, 32, Event::new("[temp]", None), &CONFIG));
-    let temp_label: Box<TextBlock>      = Box::new(TextBlock::new("°F : Target".to_string(), 90, 35, 100, 32, Event::new("[temp_label]", None), &CONFIG));
+    let up_temp: Box<Button>            = Box::new(Button::new("▲".to_string(), 0, 52, 31, 16, 9, 1, 15, Event::new("[temp.click]", Some(vec!["up".to_string()])), &CONFIG)); 
+    let dn_temp: Box<Button>            = Box::new(Button::new("▼".to_string(), 0, 70, 31, 16, 9, -1, 15, Event::new("[temp.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
+    let temp_disp: Box<TextBlock>       = Box::new(TextBlock::new("200".to_string(), 25, 62, 80, 32, Event::new("[temp]", None), &CONFIG));
+    let temp_label: Box<TextBlock>      = Box::new(TextBlock::new("°F : Target".to_string(), 90, 62, 100, 32, Event::new("[temp_label]", None), &CONFIG));
 
     // add p 
-    let up_p: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 78, 31, 16, 9, 1, 15, Event::new("[p.click]", Some(vec!["up".to_string()])), &CONFIG)); 
-    let dn_p: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 96, 31, 16, 9, -1, 15, Event::new("[p.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
-    let p_disp: Box<TextBlock>          = Box::new(TextBlock::new("15.0".to_string(), 25, 78, 80, 32, Event::new("[p]", None), &CONFIG));
-    let p_label: Box<TextBlock>         = Box::new(TextBlock::new(" : P".to_string(), 90, 78, 100, 32, Event::new("[p_label]", None), &CONFIG));
+    let up_p: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 94, 31, 16, 9, 1, 15, Event::new("[p.click]", Some(vec!["up".to_string()])), &CONFIG)); 
+    let dn_p: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 112, 31, 16, 9, -1, 15, Event::new("[p.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
+    let p_disp: Box<TextBlock>          = Box::new(TextBlock::new("15.0".to_string(), 25, 94, 80, 32, Event::new("[p]", None), &CONFIG));
+    let p_label: Box<TextBlock>         = Box::new(TextBlock::new(" : P".to_string(), 90, 94, 100, 32, Event::new("[p_label]", None), &CONFIG));
 
     // add i
-    let up_i: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 120, 31, 16, 9, 1, 15, Event::new("[i.click]", Some(vec!["up".to_string()])), &CONFIG)); 
-    let dn_i: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 138, 31, 16, 9, -1, 15, Event::new("[i.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
-    let i_disp: Box<TextBlock>          = Box::new(TextBlock::new("3.0".to_string(), 25, 120, 80, 32, Event::new("[i]", None), &CONFIG));
-    let i_label: Box<TextBlock>         = Box::new(TextBlock::new(" : I".to_string(), 90, 120, 100, 32, Event::new("[i_label]", None), &CONFIG));
+    let up_i: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 136, 31, 16, 9, 1, 15, Event::new("[i.click]", Some(vec!["up".to_string()])), &CONFIG)); 
+    let dn_i: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 154, 31, 16, 9, -1, 15, Event::new("[i.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
+    let i_disp: Box<TextBlock>          = Box::new(TextBlock::new("3.0".to_string(), 25, 136, 80, 32, Event::new("[i]", None), &CONFIG));
+    let i_label: Box<TextBlock>         = Box::new(TextBlock::new(" : I".to_string(), 90, 136, 100, 32, Event::new("[i_label]", None), &CONFIG));
 
 
 
     // add d
-    let up_d: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 162, 31, 16, 9, 1, 15, Event::new("[d.click]", Some(vec!["up".to_string()])), &CONFIG)); 
-    let dn_d: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 180, 31, 16, 9, -1, 15, Event::new("[d.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
-    let d_disp: Box<TextBlock>          = Box::new(TextBlock::new("3.0".to_string(), 25, 162, 80, 32, Event::new("[d]", None), &CONFIG));
-    let d_label: Box<TextBlock>         = Box::new(TextBlock::new(" : D".to_string(), 90, 162, 100, 32, Event::new("[d_label]", None), &CONFIG));
+    let up_d: Box<Button>               = Box::new(Button::new("▲".to_string(), 0, 178, 31, 16, 9, 1, 15, Event::new("[d.click]", Some(vec!["up".to_string()])), &CONFIG)); 
+    let dn_d: Box<Button>               = Box::new(Button::new("▼".to_string(), 0, 196, 31, 16, 9, -1, 15, Event::new("[d.click]", Some(vec!["dn".to_string()])), &CONFIG)); 
+    let d_disp: Box<TextBlock>          = Box::new(TextBlock::new("3.0".to_string(), 25, 178, 80, 32, Event::new("[d]", None), &CONFIG));
+    let d_label: Box<TextBlock>         = Box::new(TextBlock::new(" : D".to_string(), 90, 178, 100, 32, Event::new("[d_label]", None), &CONFIG));
 
+    settings_view.add_static_object(page_label);
 
 
     // add buttons to view
