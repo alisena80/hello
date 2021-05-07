@@ -63,8 +63,7 @@ pub fn setup(store: &mut Store) {
                         bincode::serialize(&new_state).unwrap()
                     },
                     _ => state.to_vec()
-                }
-            
+                }           
             } else {
                 state.to_vec()
             }
@@ -148,15 +147,10 @@ pub fn setup(store: &mut Store) {
             }
         };
 
-
-
         store.reducers.insert("[time.current_time]", time_updater);
         store.reducers.insert("[schedule.update_thread]", thread_updater);
         store.reducers.insert("[temp.click]", set_target_temp);
         store.reducers.insert("[p.click]", set_p);
         store.reducers.insert("[i.click]", set_i);
         store.reducers.insert("[d.click]", set_d);
-
-
-
 }

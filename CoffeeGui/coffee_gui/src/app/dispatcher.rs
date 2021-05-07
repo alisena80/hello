@@ -9,15 +9,15 @@ pub struct DispatchHandler {
 }
 
 impl Dispatch for DispatchHandler {
-    fn handle_event(&self,  event: Event) -> Option<Action> {
+    fn handle_event(&self,  event: Event) -> Option<Vec<Action>> {
         match event.name {
             "[hw.update_current_time]" => {
-                Some(Action::new("[time.current_time]", event.values))
+                Some(vec![Action::new("[time.current_time]", event.values)])
             },
             
             "[schedule.update_thread]" => {
                 debug!("signal to schdule");
-                Some(Action::new("[schedule.update_thread]", event.values))
+                Some(vec![Action::new("[schedule.update_thread]", event.values)])
             },
 
             "[boiler.preheat]" => {
@@ -27,19 +27,19 @@ impl Dispatch for DispatchHandler {
             },
 
             "[temp.click]" => {
-                Some(Action::new("[temp.click]", event.values))
+                Some(vec![Action::new("[temp.click]", event.values)])
             },
 
             "[p.click]" => {
-                 Some(Action::new("[p.click]", event.values))
+                 Some(vec![Action::new("[p.click]", event.values)])
             }
 
             "[i.click]" => {
-                 Some(Action::new("[i.click]", event.values))
+                 Some(vec![Action::new("[i.click]", event.values)])
             }
 
             "[d.click]" => {
-                 Some(Action::new("[d.click]", event.values))
+                 Some(vec![Action::new("[d.click]", event.values)])
             }
 
 
