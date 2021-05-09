@@ -60,7 +60,8 @@ pub fn create(store: &mut Store) -> View {
 
     // add label
     let page_label: Box<TextBlock>      = Box::new(TextBlock::new("Brew Settings".to_string(), 32, 36, 186, 24, Event::new("[settings_label]", None), &CONFIG));
-    let page_right: Box<Button>         = Box::new(Button::new("▶".to_string(), 186, 36, 16, 31, 9, 2, 15, Event::new("[pager.click]", Some(vec!["right".to_string()])), &CONFIG));
+    let page_left: Box<Button>         = Box::new(Button::new("◀".to_string(), 0, 36, 16, 31, 1, 5, 15, Event::new("[pager.click]", Some(vec!["left".to_string()])), &CONFIG));
+    let page_right: Box<Button>         = Box::new(Button::new("▶".to_string(), 233, 36, 16, 31, 1, 5, 15, Event::new("[pager.click]", Some(vec!["right".to_string()])), &CONFIG));
 
     // add buttons
     let up_temp: Box<Button>            = Box::new(Button::new("▲".to_string(), 0, 62, 31, 16, 9, 1, 15, Event::new("[temp.click]", Some(vec!["up".to_string()])), &CONFIG)); 
@@ -117,7 +118,8 @@ pub fn create(store: &mut Store) -> View {
 
     // pager
     settings_view.add_static_object(page_label);
-    settings_view.add_object(page_right, 0, 0);
+    settings_view.add_object(page_left, 0, 0);
+    settings_view.add_object(page_right, 0, 1);
 
     settings_view
 }
