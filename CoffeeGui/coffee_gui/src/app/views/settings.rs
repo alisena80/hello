@@ -59,7 +59,8 @@ pub fn create(store: &mut Store) -> View {
     let mut settings_view = View::new( settings_update_fn, state_rx);
 
     // add label
-    let page_label: Box<TextBlock>       = Box::new(TextBlock::new("Brew Settings".to_string(), 32, 36, 186, 24, Event::new("[settings_label]", None), &CONFIG));
+    let page_label: Box<TextBlock>      = Box::new(TextBlock::new("Brew Settings".to_string(), 32, 36, 186, 24, Event::new("[settings_label]", None), &CONFIG));
+    let page_right: Box<Button>         = Box::new(Button::new("▶︎".to_string(), 186, 36, 31,31, 9, 2, 15, Event::new("[pager.click]", Some(vec!["right".to_string()])), &CONFIG));
 
     // add buttons
     let up_temp: Box<Button>            = Box::new(Button::new("▲".to_string(), 0, 62, 31, 16, 9, 1, 15, Event::new("[temp.click]", Some(vec!["up".to_string()])), &CONFIG)); 
@@ -88,32 +89,35 @@ pub fn create(store: &mut Store) -> View {
 
 
     // add buttons to view
-    settings_view.add_object(up_temp, 0, 0);
-    settings_view.add_object(dn_temp, 1, 0);
+    settings_view.add_object(up_temp, 1, 0);
+    settings_view.add_object(dn_temp, 2, 0);
     settings_view.add_static_object(temp_disp);
     settings_view.add_static_object(temp_label);
 
 
     // add buttons to view
-    settings_view.add_object(up_p, 2, 0);
-    settings_view.add_object(dn_p, 3, 0);
+    settings_view.add_object(up_p, 3, 0);
+    settings_view.add_object(dn_p, 4, 0);
     settings_view.add_static_object(p_disp);
     settings_view.add_static_object(p_label);
 
 
     // add buttons to view
-    settings_view.add_object(up_i, 4, 0);
-    settings_view.add_object(dn_i, 5, 0);
+    settings_view.add_object(up_i, 5, 0);
+    settings_view.add_object(dn_i, 6, 0);
     settings_view.add_static_object(i_disp);
     settings_view.add_static_object(i_label);
 
     // add buttons to view
-    settings_view.add_object(up_d, 6, 0);
-    settings_view.add_object(dn_d, 7, 0);
+    settings_view.add_object(up_d, 7, 0);
+    settings_view.add_object(dn_d, 8, 0);
     settings_view.add_static_object(d_disp);
     settings_view.add_static_object(d_label);
 
 
+    // pager
     settings_view.add_static_object(page_label);
+    settings_view.add_object(page_right, 0, 1);
+
     settings_view
 }
