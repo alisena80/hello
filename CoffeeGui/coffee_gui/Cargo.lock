@@ -385,7 +385,7 @@ dependencies = [
 [[package]]
 name = "lovett"
 version = "0.1.0"
-source = "git+https://github.com/kcculhwch/lovett#bb42a1a7f94ebe41a941924932ed48fe2263491f"
+source = "git+https://github.com/kcculhwch/lovett#6176befcf6c66f5c87e85cd3142561d590c2ebaf"
 dependencies = [
  "bincode",
  "chrono",
