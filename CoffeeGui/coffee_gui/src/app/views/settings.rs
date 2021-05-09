@@ -117,7 +117,7 @@ pub fn create(store: &mut Store) -> View {
 
     // pager
     settings_view.add_static_object(page_label);
-    settings_view.add_object(page_right, 0, 1);
+    settings_view.add_object(page_right, 0, 0);
 
     settings_view
 }
