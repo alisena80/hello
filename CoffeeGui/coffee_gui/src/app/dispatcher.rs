@@ -41,11 +41,15 @@ impl Dispatch for DispatchHandler {
             "[d.click]" => {
                  Some(vec![Action::new("[d.click]", event.values)])
             }
-
+            "[settings_pager.click]" => {
+                Some(vec![Action::new("[settings_pager.click]", event.values)])
+            }
 
             "[set_p_down]" => {
                 None
             }
+
+
             _ => None
         }
     }

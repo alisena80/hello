@@ -18,6 +18,7 @@ pub struct State {
     pub time: TimeState,
     pub settings: SettingsState,
     pub schedule: Schedule,
+    pub window: WindowState
 }
 
 impl State {
@@ -37,19 +38,27 @@ impl State {
             },
             time: TimeState {
                 turned_on: SystemTime::now(),
-                current_time: "00:00:00 XX".to_string()
+                current_time: "00:00:00 XX".to_string(),
+                
             },
             settings: SettingsState {
                 running: false,
                 target_temp: 200,
                 p: 150,
                 i: 30,
-                d: 30
+                d: 30,
+                wake_up_hour: 8,
+                wake_up_minute: 30,
+                wake_up_enabled: false,
+                active_page: 0
             },
             schedule: Schedule {
                 time: ModelState::Empty, //we want this to start running
                 boiler: ModelState::Empty,
                 tank: ModelState::Empty,
+            },
+            window: WindowState {
+                active: 0
             }
         };
         state
@@ -74,6 +83,13 @@ pub struct TimeState {
     pub turned_on: SystemTime,
     pub current_time: String
 }
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct WindowState {
+    pub active: usize,
+}
+
+
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Schedule {
@@ -133,7 +149,11 @@ pub struct SettingsState {
     pub target_temp: i32,
     pub p: i32,
     pub i: i32,
-    pub d: i32 
+    pub d: i32,
+    wake_up_hour: i32,
+    wake_up_minute: i32,
+    wake_up_enabled: bool,
+    active_page: usize
 }
 
 

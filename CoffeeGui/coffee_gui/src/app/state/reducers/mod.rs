@@ -36,7 +36,7 @@ pub fn setup(store: &mut Store) {
                         };
 
                         bincode::serialize(&new_state).unwrap()
-                        },
+                    },
                     _ => state.to_vec()
                 }
             } else {
@@ -147,10 +147,70 @@ pub fn setup(store: &mut Store) {
             }
         };
 
+        // 0 = temp settings
+        // 1 = time settings
+
+        let settings_page: Reducer = |state, action| {
+            let decoded_state = state_decoder(state);
+            if let Some(values) = action.values {
+                match &values[0][..] {
+                    "right" => {
+                        if decoded_state.window.active == 0 {
+                            let new_state = State {
+                                // increae highest settings view
+                                window: WindowState { active: decoded_state.window.active + 1, ..decoded_state.window},
+                                ..decoded_state
+                            };
+                            bincode::serialize(&new_state).unwrap()
+
+                        } else {
+                            // on the last page cycle back around
+                            let new_state = State {
+                                // increae highest settings view
+                                window: WindowState { active: 0, ..decoded_state.window},
+                                ..decoded_state
+                            };
+                            bincode::serialize(&new_state).unwrap()
+                        }
+                    }
+                    "left" => {
+                         if decoded_state.window.active == 0 {
+                            let new_state = State {
+                                // increae highest settings view
+                                window: WindowState { active: decoded_state.window.active + 1, ..decoded_state.window},
+                                ..decoded_state
+                            };
+                            bincode::serialize(&new_state).unwrap()
+
+                        } else {
+                            // on the last page cycle back around
+                            let new_state = State {
+                                // increae highest settings view
+                                window: WindowState { active: 0, ..decoded_state.window},
+                                ..decoded_state
+                            };
+                            bincode::serialize(&new_state).unwrap()
+
+
+                        }
+                       
+                    },
+                    _ => state.to_vec()
+                }
+
+            } else {
+                state.to_vec()
+            }
+
+        };
+
+
         store.reducers.insert("[time.current_time]", time_updater);
         store.reducers.insert("[schedule.update_thread]", thread_updater);
         store.reducers.insert("[temp.click]", set_target_temp);
         store.reducers.insert("[p.click]", set_p);
         store.reducers.insert("[i.click]", set_i);
         store.reducers.insert("[d.click]", set_d);
+        store.reducers.insert("[settings_pager.click]", settings_page);
+
 }
