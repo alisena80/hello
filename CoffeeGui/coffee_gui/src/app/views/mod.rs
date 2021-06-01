@@ -57,8 +57,8 @@ pub fn setup(event_sender: Sender<Event>, store: &mut Store) -> WindowViewer {
     // register the view and set it active
     window_viewer.add_view(brew_settings_view);
     window_viewer.add_view(time_settings_view);
+    window_viewer.initialize();
     window_viewer.set_active_view(0);
-
     // return the root view so we can run it
     window_viewer
 }
